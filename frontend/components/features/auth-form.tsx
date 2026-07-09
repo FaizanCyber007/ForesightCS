@@ -1,0 +1,240 @@
+'use client';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import {
+  LockKeyhole,
+  Mail,
+  UserRound,
+  Building2,
+  BriefcaseBusiness,
+} from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+
+import { Button } from '@/components/ui/button';
+import { GlassCard } from '@/components/ui/glass-card';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/cn';
+import {
+  loginSchema,
+  registerSchema,
+  type LoginFormValues,
+  type RegisterFormValues,
+} from '@/lib/schemas';
+
+export function LoginForm() {
+  const router = useRouter();
+  const reduceMotion = useReducedMotion();
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      className="w-full max-w-xl"
+    >
+      <GlassCard className="space-y-6">
+        <div>
+          <p className="text-sm uppercase tracking-[0.35em] text-emerald-300">
+            Welcome back
+          </p>
+          <h1 className="mt-3 text-3xl font-semibold text-white">
+            Sign in to your command center
+          </h1>
+          <p className="mt-2 text-zinc-400">
+            Open live churn intelligence, review risk accounts, and launch save
+            plays in one place.
+          </p>
+        </div>
+        <form
+          className="space-y-4"
+          onSubmit={form.handleSubmit(async () => {
+            router.push('/dashboard');
+          })}
+        >
+          <Field
+            label="Work email"
+            icon={<Mail className="h-4 w-4" />}
+            error={form.formState.errors.email?.message}
+          >
+            <Input
+              type="email"
+              placeholder="you@company.com"
+              {...form.register('email')}
+            />
+          </Field>
+          <Field
+            label="Password"
+            icon={<LockKeyhole className="h-4 w-4" />}
+            error={form.formState.errors.password?.message}
+          >
+            <Input
+              type="password"
+              placeholder="Enter your secure workspace password"
+              {...form.register('password')}
+            />
+          </Field>
+          <Button className="w-full" type="submit">
+            Enter the command center
+          </Button>
+        </form>
+        <p className="text-sm text-zinc-400">
+          New here?{' '}
+          <Link className="text-emerald-300" href="/register">
+            Create a workspace
+          </Link>
+        </p>
+      </GlassCard>
+    </motion.div>
+  );
+}
+
+export function RegisterForm() {
+  const router = useRouter();
+  const reduceMotion = useReducedMotion();
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      fullName: '',
+      companyName: '',
+      role: 'Customer Success Manager',
+      email: '',
+      password: '',
+    },
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      className="w-full max-w-2xl"
+    >
+      <GlassCard className="space-y-6">
+        <div>
+          <p className="text-sm uppercase tracking-[0.35em] text-violet-300">
+            Get started
+          </p>
+          <h1 className="mt-3 text-3xl font-semibold text-white">
+            Launch your predictive CS workspace
+          </h1>
+          <p className="mt-2 text-zinc-400">
+            Set up your team profile and start calibrating the model to your
+            retention motion.
+          </p>
+        </div>
+        <form
+          className="grid gap-4 md:grid-cols-2"
+          onSubmit={form.handleSubmit(async () => {
+            router.push('/dashboard');
+          })}
+        >
+          <Field
+            label="Full name"
+            icon={<UserRound className="h-4 w-4" />}
+            error={form.formState.errors.fullName?.message}
+          >
+            <Input placeholder="Ari Johnson" {...form.register('fullName')} />
+          </Field>
+          <Field
+            label="Company"
+            icon={<Building2 className="h-4 w-4" />}
+            error={form.formState.errors.companyName?.message}
+          >
+            <Input
+              placeholder="Foresight Labs"
+              {...form.register('companyName')}
+            />
+          </Field>
+          <Field
+            label="Work email"
+            icon={<Mail className="h-4 w-4" />}
+            error={form.formState.errors.email?.message}
+          >
+            <Input
+              type="email"
+              placeholder="you@company.com"
+              {...form.register('email')}
+            />
+          </Field>
+          <Field
+            label="Role"
+            icon={<BriefcaseBusiness className="h-4 w-4" />}
+            error={form.formState.errors.role?.message}
+          >
+            <select
+              className={cn(
+                'h-11 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white backdrop-blur-xl outline-none focus:border-emerald-400/50'
+              )}
+              {...form.register('role')}
+            >
+              <option className="bg-black" value="Customer Success Manager">
+                Customer Success Manager
+              </option>
+              <option className="bg-black" value="Founder">
+                Founder
+              </option>
+              <option className="bg-black" value="Operations Lead">
+                Operations Lead
+              </option>
+              <option className="bg-black" value="RevOps Analyst">
+                RevOps Analyst
+              </option>
+            </select>
+          </Field>
+          <Field
+            label="Password"
+            icon={<LockKeyhole className="h-4 w-4" />}
+            error={form.formState.errors.password?.message}
+          >
+            <Input
+              type="password"
+              placeholder="Create a secure password"
+              {...form.register('password')}
+            />
+          </Field>
+          <div className="md:col-span-2">
+            <Button className="w-full" type="submit">
+              Create your workspace
+            </Button>
+          </div>
+        </form>
+        <p className="text-sm text-zinc-400">
+          Already using ForesightCS?{' '}
+          <Link className="text-violet-300" href="/login">
+            Go to sign in
+          </Link>
+        </p>
+      </GlassCard>
+    </motion.div>
+  );
+}
+
+function Field({
+  label,
+  icon,
+  error,
+  children,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="space-y-2">
+      <span className="flex items-center gap-2 text-sm text-zinc-300">
+        {icon}
+        {label}
+      </span>
+      {children}
+      {error ? <p className="text-xs text-rose-300">{error}</p> : null}
+    </label>
+  );
+}
