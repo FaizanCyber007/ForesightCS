@@ -1,14 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Menu, ShieldAlert } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 import { Sidebar } from '@/components/layout/sidebar';
 import { DashboardHeader } from '@/components/layout/dashboard-header';
+import { useAuth } from '@/context/auth-context';
+import { Button } from '@/components/ui/button';
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#050505]">
+        <div className="text-center space-y-4">
+          <div className="relative flex h-14 w-14 mx-auto items-center justify-center rounded-2xl border border-emerald-400/20 bg-emerald-400/5 text-emerald-300 animate-pulse">
+            <span className="text-lg font-bold">F</span>
+          </div>
+          <p className="text-zinc-500 text-sm tracking-wider uppercase">Loading security posture...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#050505] p-6">
+        <div className="w-full max-w-md rounded-[32px] border border-white/10 bg-[#0d0f12]/90 p-8 text-center backdrop-blur-2xl">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            <ShieldAlert className="h-6 w-6" />
+          </div>
+          <h2 className="mt-4 text-xl font-semibold text-white">Access Denied</h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            You must be logged into your workspace to view the customer success command center.
+          </p>
+          <div className="mt-6">
+            <Button className="w-full" onClick={() => router.push('/login')}>
+              Go to Login
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white lg:grid lg:grid-cols-[280px_1fr]">

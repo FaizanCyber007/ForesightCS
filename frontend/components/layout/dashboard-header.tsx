@@ -4,12 +4,18 @@ import { Bell, Search, User } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { useAuth } from '@/context/auth-context';
+
 import { CommandPalette, type CommandItem } from '@/components/ui/command-palette';
 
 const commandItems: CommandItem[] = [
   // Navigation
   { id: 'nav-dashboard', label: 'Command Center', hint: 'Overview & metrics', group: 'Navigation', href: '/dashboard' },
+  { id: 'nav-accounts', label: 'Accounts', hint: 'Full customer portfolio', group: 'Navigation', href: '/dashboard/accounts' },
+  { id: 'nav-analytics', label: 'Analytics', hint: 'Health trends & charts', group: 'Navigation', href: '/dashboard/analytics' },
+  { id: 'nav-playbooks', label: 'Playbooks', hint: 'Automated workflows', group: 'Navigation', href: '/dashboard/playbooks' },
   { id: 'nav-rules', label: 'Rule Builder', hint: 'Configure churn rules', group: 'Navigation', href: '/dashboard/rules/new' },
+  { id: 'nav-settings', label: 'Settings', hint: 'Profile & workspace', group: 'Navigation', href: '/dashboard/settings' },
   // Customers
   { id: 'cust-acme', label: 'Acme Cloud', hint: 'Healthy · Mid-Market', group: 'Customers', href: '/dashboard/customer/acme-cloud' },
   { id: 'cust-northstar', label: 'Northstar Health', hint: 'At-Risk · SMB', group: 'Customers', href: '/dashboard/customer/northstar-health' },
@@ -22,6 +28,7 @@ const commandItems: CommandItem[] = [
 export function DashboardHeader() {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
   const [cmdOpen, setCmdOpen] = useState(false);
 
   // Create breadcrumbs based on pathname
@@ -89,7 +96,7 @@ export function DashboardHeader() {
           </button>
           <button
             className="hidden sm:flex h-9 px-3 items-center justify-center rounded-full border border-rose-500/30 bg-rose-500/10 text-xs font-medium text-rose-300 transition-colors hover:bg-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/50"
-            onClick={() => router.push('/')}
+            onClick={() => { logout(); router.push('/'); }}
             aria-label="Log out"
           >
             Log out

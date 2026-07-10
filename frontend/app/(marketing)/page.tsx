@@ -1,177 +1,165 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Play, ShieldCheck, TrendingUp, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 
 import { LandingSections } from '@/components/features/landing-sections';
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { Button } from '@/components/ui/button';
-import { GlassCard } from '@/components/ui/glass-card';
+import { DashboardMockup } from '@/components/features/dashboard-mockup';
+import mockData from '@/data/mock-data.json';
 
-const stats = [
-  ['27%', 'average churn reduction'],
-  ['4.3x', 'faster intervention'],
-  ['98%', 'signal coverage'],
-];
+const { publicStats } = mockData as typeof mockData & {
+  publicStats: { value: string; label: string }[];
+};
 
-const riskRows = [
-  { name: 'Acme Cloud', risk: 8, tone: 'bg-emerald-300' },
-  { name: 'Northstar Health', risk: 41, tone: 'bg-amber-300' },
-  { name: 'Atlas Retail', risk: 78, tone: 'bg-rose-300' },
-  { name: 'Summit Ops', risk: 6, tone: 'bg-emerald-300' },
+const trustBadges = [
+  { icon: ShieldCheck, text: 'SOC 2 Type II' },
+  { icon: TrendingUp, text: 'GDPR compliant' },
+  { icon: Zap, text: 'Setup in < 1 day' },
 ];
 
 export default function Home() {
   const reduceMotion = useReducedMotion();
 
-  const containerVariants = {
+  const stagger = {
     hidden: {},
-    visible: {
-      transition: { staggerChildren: 0.12, delayChildren: 0.1 },
-    },
+    visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: reduceMotion ? 0 : 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const },
-    },
+  const fadeUp = {
+    hidden: { opacity: 0, y: reduceMotion ? 0 : 24 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } },
   };
 
   return (
     <>
-      <section className="relative overflow-hidden">
-        <PageWrapper className="relative grid gap-10 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-32">
+      {/* ─── HERO ──────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden py-20 lg:py-28">
+        {/* Ambient glow layer */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-0 h-[600px] w-[900px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_top,rgba(16,185,129,0.14),transparent_65%)]" />
+          <div className="absolute right-0 top-1/4 h-[400px] w-[400px] bg-[radial-gradient(circle,rgba(139,92,246,0.1),transparent_70%)]" />
+        </div>
+
+        <PageWrapper className="relative">
+          {/* ── Eyebrow badge ── */}
           <motion.div
-            className="space-y-8"
-            variants={containerVariants}
+            className="mb-8 flex justify-center"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/8 px-4 py-2 text-sm text-emerald-300">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
+              The predictive CS platform built for modern revenue teams
+            </span>
+          </motion.div>
+
+          {/* ── Headline — FULL WIDTH CENTERED ── */}
+          <motion.div
+            className="mx-auto max-w-4xl text-center"
+            variants={stagger}
             initial="hidden"
             animate="visible"
           >
-            <motion.div variants={itemVariants}>
-              <GlassCard className="inline-flex w-fit items-center gap-2 rounded-full px-4 py-2 text-sm text-zinc-300">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" />
-                Predictive customer success for SMB revenue teams
-              </GlassCard>
-            </motion.div>
-
-            <motion.div className="space-y-5" variants={itemVariants}>
-              <h1 className="max-w-3xl text-5xl font-semibold leading-[1.05] tracking-tight text-white md:text-7xl">
-                Predict churn before it becomes a{' '}
-                <span className="bg-gradient-to-r from-emerald-300 to-violet-400 bg-clip-text text-transparent">
-                  revenue event.
+            <motion.h1
+              variants={fadeUp}
+              className="text-5xl font-semibold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-[72px]"
+            >
+              Stop discovering churn{' '}
+              <span className="relative">
+                <span className="bg-gradient-to-r from-emerald-300 via-teal-200 to-violet-400 bg-clip-text text-transparent">
+                  on renewal day.
                 </span>
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-zinc-400 md:text-xl">
-                ForesightCS blends product telemetry, billing posture, support
-                intensity, and account context into a premium operating system
-                for modern customer success teams.
-              </p>
-            </motion.div>
+                {/* Underline glow */}
+                <span className="absolute -bottom-1 left-0 h-px w-full bg-gradient-to-r from-emerald-400/0 via-emerald-400/60 to-violet-400/0" />
+              </span>
+            </motion.h1>
 
-            <motion.div className="flex flex-wrap gap-3" variants={itemVariants}>
-              <Button asChild size="lg">
+            <motion.p
+              variants={fadeUp}
+              className="mx-auto mt-7 max-w-2xl text-xl leading-8 text-zinc-400"
+            >
+              ForesightCS monitors product usage, billing posture, support health, and engagement signals to{' '}
+              <strong className="font-medium text-zinc-200">identify at-risk accounts 30–60 days early</strong>
+              {' '}— so your team can intervene before churn becomes inevitable.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center justify-center gap-4">
+              <Button size="lg" variant="brand" asChild>
                 <Link href="/register">
-                  Start free <ArrowRight className="h-4 w-4" />
+                  Start free trial — no card needed <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="secondary" size="lg" asChild>
-                <Link href="/login">View command center</Link>
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/login">
+                  <Play className="h-4 w-4 fill-current" />
+                  See it live
+                </Link>
               </Button>
             </motion.div>
 
+            {/* Trust badges */}
             <motion.div
-              className="grid gap-4 sm:grid-cols-3"
-              variants={itemVariants}
+              variants={fadeUp}
+              className="mt-8 flex flex-wrap items-center justify-center gap-6"
             >
-              {stats.map(([value, label]) => (
-                <GlassCard key={label} className="space-y-1">
-                  <p className="font-mono-numeric text-3xl font-semibold text-white">
-                    {value}
-                  </p>
-                  <p className="text-sm text-zinc-500">{label}</p>
-                </GlassCard>
+              {trustBadges.map(({ icon: Icon, text }) => (
+                <div key={text} className="flex items-center gap-2 text-sm text-zinc-500">
+                  <Icon className="h-4 w-4 text-zinc-600" />
+                  {text}
+                </div>
               ))}
             </motion.div>
           </motion.div>
 
-          {/* Live signal preview panel */}
+          {/* ── PRODUCT MOCKUP — full-width below headline, Gainsight style ── */}
           <motion.div
-            initial={{ opacity: 0, x: reduceMotion ? 0 : 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 48, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-16 relative"
           >
-            <HeroPreview />
+            {/* Glow underneath mockup */}
+            <div className="pointer-events-none absolute -inset-x-8 -bottom-12 top-8 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08),transparent_70%)] blur-2xl" />
+            <DashboardMockup />
           </motion.div>
+
+          {/* ── Stats row ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.9 }}
+            className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          >
+            {publicStats.map(({ value, label }) => (
+              <div
+                key={label}
+                className="relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.03] p-5 text-center"
+              >
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.04),transparent_60%)]" />
+                <p className="font-mono-numeric text-3xl font-bold text-white">{value}</p>
+                <p className="mt-1 text-sm text-zinc-500">{label}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* ── Social proof ── */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
+            className="mt-8 text-center text-sm text-zinc-600"
+          >
+            Trusted by <span className="text-zinc-400">400+ customer success teams</span> across SaaS, fintech, and healthcare.
+          </motion.p>
         </PageWrapper>
       </section>
+
       <LandingSections />
     </>
-  );
-}
-
-function HeroPreview() {
-  return (
-    <GlassCard className="relative space-y-4 p-5 backdrop-blur-2xl">
-      <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-zinc-500">
-        <span>Live signal map</span>
-        <span className="flex items-center gap-2 text-emerald-300">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-300" />
-          streaming
-        </span>
-      </div>
-      <div className="space-y-2.5">
-        {riskRows.map((row, i) => (
-          <motion.div
-            key={row.name}
-            initial={{ opacity: 0, x: -16 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.5 + i * 0.08 }}
-            className="flex items-center gap-3 rounded-2xl border border-white/8 bg-black/30 px-4 py-3"
-          >
-            <span className="text-sm text-white">{row.name}</span>
-            <div className="flex-1" />
-            <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/10">
-              <motion.div
-                className={`h-full rounded-full ${row.tone}`}
-                initial={{ width: 0 }}
-                animate={{ width: `${row.risk}%` }}
-                transition={{ duration: 0.8, delay: 0.6 + i * 0.1 }}
-              />
-            </div>
-            <span className="font-mono-numeric w-9 text-right text-xs text-zinc-400">
-              {row.risk}%
-            </span>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Mini chart preview */}
-      <div className="rounded-2xl border border-white/8 bg-black/20 p-4">
-        <div className="flex items-center justify-between text-xs text-zinc-500 mb-3">
-          <span>ARR momentum</span>
-          <span className="text-emerald-300">↑ +12% MoM</span>
-        </div>
-        <div className="flex items-end gap-1.5 h-12">
-          {[40, 55, 48, 62, 70, 78, 85, 92].map((h, i) => (
-            <motion.div
-              key={i}
-              className="flex-1 rounded-sm bg-emerald-400/30"
-              initial={{ height: 0 }}
-              animate={{ height: `${h}%` }}
-              transition={{ duration: 0.5, delay: 0.8 + i * 0.05 }}
-              style={{ alignSelf: 'flex-end' }}
-            />
-          ))}
-        </div>
-      </div>
-
-      <p className="text-xs text-zinc-500">
-        Health, risk, and renewal posture consolidated into one revenue surface.
-      </p>
-    </GlassCard>
   );
 }

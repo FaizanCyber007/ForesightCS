@@ -12,11 +12,14 @@ import {
 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/cn';
+import { useAuth } from '@/context/auth-context';
+import { useToast } from '@/components/ui/toast';
 import {
   loginSchema,
   registerSchema,
@@ -26,11 +29,38 @@ import {
 
 export function LoginForm() {
   const router = useRouter();
+  const { login } = useAuth();
+  const { toast } = useToast();
   const reduceMotion = useReducedMotion();
+  const [submitting, setSubmitting] = useState(false);
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
   });
+
+  async function onSubmit(values: LoginFormValues) {
+    setSubmitting(true);
+    try {
+      const success = await login(values.email);
+      if (success) {
+        toast({
+          title: 'Authorized',
+          description: 'Access granted. Opening CS command center.',
+          tone: 'success',
+        });
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      toast({
+        title: 'Authentication Failed',
+        description: 'Check credentials and try again.',
+        tone: 'error',
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <motion.div
@@ -54,9 +84,7 @@ export function LoginForm() {
         </div>
         <form
           className="space-y-4"
-          onSubmit={form.handleSubmit(async () => {
-            router.push('/dashboard');
-          })}
+          onSubmit={form.handleSubmit(onSubmit)}
         >
           <Field
             label="Work email"
@@ -66,6 +94,7 @@ export function LoginForm() {
             <Input
               type="email"
               placeholder="you@company.com"
+              disabled={submitting}
               {...form.register('email')}
             />
           </Field>
@@ -77,16 +106,17 @@ export function LoginForm() {
             <Input
               type="password"
               placeholder="Enter your secure workspace password"
+              disabled={submitting}
               {...form.register('password')}
             />
           </Field>
-          <Button className="w-full" type="submit">
-            Enter the command center
+          <Button className="w-full" type="submit" disabled={submitting}>
+            {submitting ? 'Connecting...' : 'Enter the command center'}
           </Button>
         </form>
         <p className="text-sm text-zinc-400">
           New here?{' '}
-          <Link className="text-emerald-300" href="/register">
+          <Link className="text-emerald-300 hover:text-emerald-200 transition-colors" href="/register">
             Create a workspace
           </Link>
         </p>
@@ -97,7 +127,11 @@ export function LoginForm() {
 
 export function RegisterForm() {
   const router = useRouter();
+  const { register } = useAuth();
+  const { toast } = useToast();
   const reduceMotion = useReducedMotion();
+  const [submitting, setSubmitting] = useState(false);
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -108,6 +142,34 @@ export function RegisterForm() {
       password: '',
     },
   });
+
+  async function onSubmit(values: RegisterFormValues) {
+    setSubmitting(true);
+    try {
+      const success = await register(
+        values.fullName,
+        values.companyName,
+        values.role,
+        values.email
+      );
+      if (success) {
+        toast({
+          title: 'Workspace Created',
+          description: `Welcome to ForesightCS, ${values.fullName}.`,
+          tone: 'success',
+        });
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      toast({
+        title: 'Registration Failed',
+        description: 'An error occurred during workspace creation.',
+        tone: 'error',
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <motion.div
@@ -131,16 +193,14 @@ export function RegisterForm() {
         </div>
         <form
           className="grid gap-4 md:grid-cols-2"
-          onSubmit={form.handleSubmit(async () => {
-            router.push('/dashboard');
-          })}
+          onSubmit={form.handleSubmit(onSubmit)}
         >
           <Field
             label="Full name"
             icon={<UserRound className="h-4 w-4" />}
             error={form.formState.errors.fullName?.message}
           >
-            <Input placeholder="Ari Johnson" {...form.register('fullName')} />
+            <Input placeholder="Ari Johnson" disabled={submitting} {...form.register('fullName')} />
           </Field>
           <Field
             label="Company"
@@ -149,6 +209,7 @@ export function RegisterForm() {
           >
             <Input
               placeholder="Foresight Labs"
+              disabled={submitting}
               {...form.register('companyName')}
             />
           </Field>
@@ -160,6 +221,7 @@ export function RegisterForm() {
             <Input
               type="email"
               placeholder="you@company.com"
+              disabled={submitting}
               {...form.register('email')}
             />
           </Field>
@@ -169,21 +231,22 @@ export function RegisterForm() {
             error={form.formState.errors.role?.message}
           >
             <select
+              disabled={submitting}
               className={cn(
-                'h-11 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white backdrop-blur-xl outline-none focus:border-emerald-400/50'
+                'h-11 w-full rounded-2xl border border-white/10 bg-[#0c0d0f] px-4 text-sm text-white outline-none focus:border-emerald-400/50'
               )}
               {...form.register('role')}
             >
-              <option className="bg-black" value="Customer Success Manager">
+              <option value="Customer Success Manager">
                 Customer Success Manager
               </option>
-              <option className="bg-black" value="Founder">
+              <option value="Founder">
                 Founder
               </option>
-              <option className="bg-black" value="Operations Lead">
+              <option value="Operations Lead">
                 Operations Lead
               </option>
-              <option className="bg-black" value="RevOps Analyst">
+              <option value="RevOps Analyst">
                 RevOps Analyst
               </option>
             </select>
@@ -192,22 +255,24 @@ export function RegisterForm() {
             label="Password"
             icon={<LockKeyhole className="h-4 w-4" />}
             error={form.formState.errors.password?.message}
+            className="md:col-span-2"
           >
             <Input
               type="password"
               placeholder="Create a secure password"
+              disabled={submitting}
               {...form.register('password')}
             />
           </Field>
           <div className="md:col-span-2">
-            <Button className="w-full" type="submit">
-              Create your workspace
+            <Button className="w-full" type="submit" disabled={submitting}>
+              {submitting ? 'Initializing workspace...' : 'Create your workspace'}
             </Button>
           </div>
         </form>
         <p className="text-sm text-zinc-400">
           Already using ForesightCS?{' '}
-          <Link className="text-violet-300" href="/login">
+          <Link className="text-violet-300 hover:text-violet-200 transition-colors" href="/login">
             Go to sign in
           </Link>
         </p>
@@ -220,21 +285,23 @@ function Field({
   label,
   icon,
   error,
+  className,
   children,
 }: {
   label: string;
   icon: React.ReactNode;
   error?: string;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <label className="space-y-2">
+    <label className={cn('space-y-2 block', className)}>
       <span className="flex items-center gap-2 text-sm text-zinc-300">
         {icon}
         {label}
       </span>
       {children}
-      {error ? <p className="text-xs text-rose-300">{error}</p> : null}
+      {error ? <p className="text-xs text-rose-400">{error}</p> : null}
     </label>
   );
 }
