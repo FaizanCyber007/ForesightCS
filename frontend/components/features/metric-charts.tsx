@@ -1,5 +1,18 @@
+'use client';
+
 import { GlassCard } from '@/components/ui/glass-card';
 import type { HealthDistribution, MonthlyTrend } from '@/services/api';
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+  Cell,
+  Pie,
+  PieChart,
+} from 'recharts';
 
 export function MetricCharts({
   trends,
@@ -8,16 +21,6 @@ export function MetricCharts({
   trends: MonthlyTrend[];
   distribution: HealthDistribution[];
 }) {
-  const highestTrend = Math.max(
-    ...trends.map((trend) =>
-      Math.max(trend.churnRisk, trend.retainedRevenue, trend.expansionRevenue)
-    )
-  );
-  const highestDistribution = Math.max(
-    ...distribution.map((item) => item.value),
-    1
-  );
-
   return (
     <div className="grid gap-4 xl:grid-cols-[1.5fr_0.9fr]">
       <GlassCard className="space-y-6">
@@ -27,49 +30,72 @@ export function MetricCharts({
               Signal trends
             </p>
             <h3 className="mt-2 text-xl font-semibold text-white">
-              Momentum across the quarter
+              Revenue Momentum (ARR)
             </h3>
           </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {[
-            { key: 'churnRisk', label: 'Risk' },
-            { key: 'retainedRevenue', label: 'Retained' },
-            { key: 'expansionRevenue', label: 'Expansion' },
-          ].map((series) => (
-            <div
-              key={series.key}
-              className="space-y-3 rounded-3xl border border-white/10 bg-black/20 p-4"
+        <div className="h-[280px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={trends}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
-              <p className="text-sm text-zinc-400">{series.label}</p>
-              <div className="flex h-48 items-end gap-2">
-                {trends.map((trend) => {
-                  const value = trend[
-                    series.key as keyof MonthlyTrend
-                  ] as number;
-                  const height = Math.max(16, (value / highestTrend) * 100);
-                  return (
-                    <div
-                      key={`${series.label}-${trend.month}`}
-                      className="flex flex-1 flex-col items-center gap-2"
-                    >
-                      <div className="w-full rounded-2xl bg-white/5 p-1">
-                        <div
-                          className="rounded-2xl bg-gradient-to-t from-emerald-400 to-violet-400"
-                          style={{ height: `${height}%` }}
-                        />
-                      </div>
-                      <span className="text-xs text-zinc-500">
-                        {trend.month}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+              <defs>
+                <linearGradient id="colorRetained" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#34d399" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorExpansion" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#a78bfa" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#a78bfa" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis 
+                dataKey="month" 
+                stroke="#52525b" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+              />
+              <YAxis 
+                stroke="#52525b" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+                tickFormatter={(val) => `$${val}k`} 
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#0a0a0a',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: '16px',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+                }}
+                itemStyle={{ color: '#fff' }}
+              />
+              <Area
+                type="monotone"
+                dataKey="retainedRevenue"
+                name="Retained ARR"
+                stroke="#34d399"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorRetained)"
+              />
+              <Area
+                type="monotone"
+                dataKey="expansionRevenue"
+                name="Expansion ARR"
+                stroke="#a78bfa"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorExpansion)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </GlassCard>
+      
       <GlassCard className="space-y-5">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
@@ -79,22 +105,42 @@ export function MetricCharts({
             Account state distribution
           </h3>
         </div>
-        <div className="space-y-4">
+        <div className="flex items-center justify-center h-[220px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={distribution}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={90}
+                paddingAngle={5}
+                dataKey="value"
+                stroke="none"
+              >
+                {distribution.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: '#0a0a0a',
+                  borderColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: '16px',
+                }}
+                itemStyle={{ color: '#fff' }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
           {distribution.map((item) => (
-            <div key={item.label} className="space-y-2">
-              <div className="flex items-center justify-between text-sm text-zinc-400">
-                <span>{item.label}</span>
-                <span>{item.value}</span>
+            <div key={item.label} className="text-center">
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                <span className="text-xs text-zinc-400">{item.label}</span>
               </div>
-              <div className="h-3 rounded-full bg-white/5">
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: `${(item.value / highestDistribution) * 100}%`,
-                    backgroundColor: item.color,
-                  }}
-                />
-              </div>
+              <p className="text-lg font-semibold text-white">{item.value}</p>
             </div>
           ))}
         </div>

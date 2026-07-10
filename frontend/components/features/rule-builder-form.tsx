@@ -7,8 +7,33 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
 import { Input } from '@/components/ui/input';
+import { Select, type SelectOption } from '@/components/ui/select';
+import { useToast } from '@/components/ui/toast';
 import { cn } from '@/lib/cn';
 import { churnRuleSchema, type ChurnRuleFormValues } from '@/lib/schemas';
+
+const metricOptions: SelectOption[] = [
+  { value: 'login_drop', label: 'Login drop' },
+  { value: 'feature_adoption', label: 'Feature adoption' },
+  { value: 'ticket_spike', label: 'Ticket spike' },
+  { value: 'billing_delinquency', label: 'Billing delinquency' },
+  { value: 'nps_decline', label: 'NPS decline' },
+];
+
+const operatorOptions: SelectOption[] = [
+  { value: '>', label: 'Greater than (>)' },
+  { value: '>=', label: 'At least (>=)' },
+  { value: '<', label: 'Less than (<)' },
+  { value: '<=', label: 'At most (<=)' },
+  { value: 'between', label: 'Between' },
+];
+
+const severityOptions: SelectOption[] = [
+  { value: 'low', label: 'Low' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'high', label: 'High' },
+  { value: 'critical', label: 'Critical' },
+];
 
 const initialValues: ChurnRuleFormValues = {
   name: 'Low engagement watchlist',
@@ -36,11 +61,18 @@ const initialValues: ChurnRuleFormValues = {
 };
 
 export function RuleBuilderForm() {
+  const { toast } = useToast();
   const form = useForm<ChurnRuleFormValues>({
     resolver: zodResolver(churnRuleSchema) as never,
     defaultValues: initialValues,
   });
   const fields = useFieldArray({ control: form.control, name: 'conditions' });
+
+  const totalWeight = fields.fields.reduce(
+    (sum, _, index) =>
+      sum + Number(form.watch(`conditions.${index}.weight`) ?? 0),
+    0
+  );
 
   return (
     <GlassCard className="space-y-6">
@@ -54,32 +86,32 @@ export function RuleBuilderForm() {
           degrades.
         </p>
       </div>
-      <form className="space-y-6" onSubmit={form.handleSubmit(() => undefined)}>
+
+      <form
+        className="space-y-6"
+        onSubmit={form.handleSubmit(() => {
+          toast({
+            title: 'Rule saved',
+            description: 'The churn rule is now active on your accounts.',
+            tone: 'success',
+          });
+        })}
+      >
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="Rule name" error={form.formState.errors.name?.message}>
+          <Field
+            label="Rule name"
+            error={form.formState.errors.name?.message}
+          >
             <Input {...form.register('name')} />
           </Field>
           <Field
             label="Severity"
             error={form.formState.errors.severity?.message}
           >
-            <select
-              className="h-11 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none"
+            <Select
+              options={severityOptions}
               {...form.register('severity')}
-            >
-              <option className="bg-black" value="low">
-                Low
-              </option>
-              <option className="bg-black" value="medium">
-                Medium
-              </option>
-              <option className="bg-black" value="high">
-                High
-              </option>
-              <option className="bg-black" value="critical">
-                Critical
-              </option>
-            </select>
+            />
           </Field>
           <Field
             label="Description"
@@ -107,19 +139,22 @@ export function RuleBuilderForm() {
             <p className="text-white">Validation notes</p>
             <p className="mt-2">
               Weights must stay between 1 and 10. Metrics cannot be empty.
-              Thresholds are normalized to a 0-100 risk band.
+              Thresholds are normalized to a 0&ndash;100 risk band.
             </p>
           </div>
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
                 Conditions
               </p>
               <h4 className="mt-2 text-lg font-semibold text-white">
                 Weighted signal set
+                <span className="ml-3 align-middle text-sm font-normal text-zinc-500">
+                  total weight {totalWeight}
+                </span>
               </h4>
             </div>
             <Button
@@ -139,115 +174,97 @@ export function RuleBuilderForm() {
             </Button>
           </div>
 
-          <div className="space-y-4">
+          <div className="relative space-y-4 before:absolute before:bottom-4 before:left-6 before:top-4 before:w-[2px] before:bg-white/10">
             {fields.fields.map((field, index) => (
-              <div
-                key={field.id}
-                className="grid gap-3 rounded-[28px] border border-white/10 bg-black/25 p-4 md:grid-cols-5"
-              >
-                <Field
-                  label="Metric"
-                  error={
-                    form.formState.errors.conditions?.[index]?.metric?.message
-                  }
-                >
-                  <select
-                    className="h-11 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none"
-                    {...form.register(`conditions.${index}.metric` as const)}
-                  >
-                    <option className="bg-black" value="login_drop">
-                      Login drop
-                    </option>
-                    <option className="bg-black" value="feature_adoption">
-                      Feature adoption
-                    </option>
-                    <option className="bg-black" value="ticket_spike">
-                      Ticket spike
-                    </option>
-                    <option className="bg-black" value="billing_delinquency">
-                      Billing delinquency
-                    </option>
-                    <option className="bg-black" value="nps_decline">
-                      NPS decline
-                    </option>
-                  </select>
-                </Field>
-                <Field
-                  label="Operator"
-                  error={
-                    form.formState.errors.conditions?.[index]?.operator?.message
-                  }
-                >
-                  <select
-                    className="h-11 w-full rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-white outline-none"
-                    {...form.register(`conditions.${index}.operator` as const)}
-                  >
-                    <option className="bg-black" value=">">
-                      &gt;
-                    </option>
-                    <option className="bg-black" value=">=">
-                      &gt;=
-                    </option>
-                    <option className="bg-black" value="<">
-                      &lt;
-                    </option>
-                    <option className="bg-black" value="<=">
-                      &lt;=
-                    </option>
-                    <option className="bg-black" value="between">
-                      Between
-                    </option>
-                  </select>
-                </Field>
-                <Field
-                  label="Threshold"
-                  error={
-                    form.formState.errors.conditions?.[index]?.threshold
-                      ?.message
-                  }
-                >
-                  <Input
-                    type="number"
-                    {...form.register(`conditions.${index}.threshold` as const)}
-                  />
-                </Field>
-                <Field
-                  label="Weight"
-                  error={
-                    form.formState.errors.conditions?.[index]?.weight?.message
-                  }
-                >
-                  <Input
-                    type="number"
-                    {...form.register(`conditions.${index}.weight` as const)}
-                  />
-                </Field>
-                <div className="flex items-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => fields.remove(index)}
-                    disabled={fields.fields.length === 1}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+              <div key={field.id} className="relative flex items-center gap-4">
+                <div className="z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-[#0a0a0a] text-xs font-semibold text-emerald-300">
+                  {index === 0 ? 'IF' : 'AND'}
                 </div>
-                <div className="md:col-span-5">
-                  <Field
-                    label="Window (days)"
-                    error={
-                      form.formState.errors.conditions?.[index]?.windowDays
-                        ?.message
-                    }
-                  >
-                    <Input
-                      type="number"
-                      {...form.register(
-                        `conditions.${index}.windowDays` as const
-                      )}
-                    />
-                  </Field>
+                <div className="flex-1 rounded-[28px] border border-white/10 bg-black/25 p-4 transition-colors hover:border-emerald-400/25">
+                  <div className="grid gap-3 md:grid-cols-5">
+                    <Field
+                      label="Metric"
+                      error={
+                        form.formState.errors.conditions?.[index]?.metric
+                          ?.message
+                      }
+                    >
+                      <Select
+                        options={metricOptions}
+                        {...form.register(`conditions.${index}.metric` as const)}
+                      />
+                    </Field>
+                    <Field
+                      label="Operator"
+                      error={
+                        form.formState.errors.conditions?.[index]?.operator
+                          ?.message
+                      }
+                    >
+                      <Select
+                        options={operatorOptions}
+                        {...form.register(
+                          `conditions.${index}.operator` as const
+                        )}
+                      />
+                    </Field>
+                    <Field
+                      label="Threshold"
+                      error={
+                        form.formState.errors.conditions?.[index]?.threshold
+                          ?.message
+                      }
+                    >
+                      <Input
+                        type="number"
+                        {...form.register(
+                          `conditions.${index}.threshold` as const
+                        )}
+                      />
+                    </Field>
+                    <Field
+                      label="Weight"
+                      error={
+                        form.formState.errors.conditions?.[index]?.weight
+                          ?.message
+                      }
+                    >
+                      <Input
+                        type="number"
+                        {...form.register(
+                          `conditions.${index}.weight` as const
+                        )}
+                      />
+                    </Field>
+                    <div className="flex items-end">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Remove ${index + 1}`}
+                        onClick={() => fields.remove(index)}
+                        disabled={fields.fields.length === 1}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Field
+                      label="Window (days)"
+                      error={
+                        form.formState.errors.conditions?.[index]?.windowDays
+                          ?.message
+                      }
+                    >
+                      <Input
+                        type="number"
+                        {...form.register(
+                          `conditions.${index}.windowDays` as const
+                        )}
+                      />
+                    </Field>
+                  </div>
                 </div>
               </div>
             ))}
@@ -290,7 +307,11 @@ function Field({
     <label className={cn('space-y-2', className)}>
       <span className="text-sm text-zinc-300">{label}</span>
       {children}
-      {error ? <p className="text-xs text-rose-300">{error}</p> : null}
+      {error ? (
+        <p role="alert" className="text-xs text-rose-300">
+          {error}
+        </p>
+      ) : null}
     </label>
   );
 }

@@ -6,30 +6,61 @@ import { useRef } from 'react';
 import * as THREE from 'three';
 
 function Orb() {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const outerRef = useRef<THREE.Mesh>(null);
+  const innerRef = useRef<THREE.Mesh>(null);
 
   useFrame(({ clock, pointer }) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.x = clock.elapsedTime * 0.25 + pointer.y * 0.6;
-    meshRef.current.rotation.y = clock.elapsedTime * 0.35 + pointer.x * 0.8;
-    meshRef.current.position.x = pointer.x * 0.3;
-    meshRef.current.position.y = pointer.y * 0.2;
+    if (!groupRef.current || !outerRef.current || !innerRef.current) return;
+    const t = clock.elapsedTime;
+    
+    groupRef.current.rotation.x = t * 0.15 + pointer.y * 0.3;
+    groupRef.current.rotation.y = t * 0.2 + pointer.x * 0.4;
+    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, pointer.x * 0.5, 0.1);
+    groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, pointer.y * 0.5, 0.1);
+
+    outerRef.current.rotation.y = t * 0.3;
+    outerRef.current.rotation.z = t * 0.2;
+    innerRef.current.rotation.x = t * -0.5;
+    innerRef.current.rotation.y = t * -0.4;
   });
 
   return (
-    <Float speed={1.5} rotationIntensity={1.1} floatIntensity={1.2}>
-      <mesh ref={meshRef}>
-        <icosahedronGeometry args={[1.35, 5]} />
-        <meshPhysicalMaterial
-          color="#a7f3d0"
-          emissive="#3b82f6"
-          emissiveIntensity={0.4}
-          roughness={0.18}
-          metalness={0.85}
-          transmission={0.4}
-          thickness={0.8}
-        />
-      </mesh>
+    <Float speed={2} rotationIntensity={0.5} floatIntensity={1.5}>
+      <group ref={groupRef}>
+        {/* Outer complex wireframe */}
+        <mesh ref={outerRef}>
+          <icosahedronGeometry args={[1.6, 2]} />
+          <meshStandardMaterial
+            color="#34d399"
+            wireframe
+            transparent
+            opacity={0.3}
+            emissive="#10b981"
+            emissiveIntensity={0.5}
+          />
+        </mesh>
+        
+        {/* Inner solid glowing core */}
+        <mesh ref={innerRef}>
+          <octahedronGeometry args={[0.9, 0]} />
+          <meshPhysicalMaterial
+            color="#8b5cf6"
+            emissive="#6d28d9"
+            emissiveIntensity={0.8}
+            roughness={0.1}
+            metalness={0.9}
+            clearcoat={1}
+            clearcoatRoughness={0.1}
+          />
+        </mesh>
+        
+        {/* Subtle connecting ring */}
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[1.9, 0.02, 16, 100]} />
+          <meshBasicMaterial color="#a78bfa" transparent opacity={0.4} />
+        </mesh>
+      </group>
     </Float>
   );
 }
