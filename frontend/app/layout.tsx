@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { ToastProvider } from '@/components/ui/toast';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -13,8 +14,18 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ForesightCS',
-  description: 'Predict churn before it becomes revenue loss.',
+  title: {
+    default: 'ForesightCS — Predictive Customer Success',
+    template: '%s | ForesightCS',
+  },
+  description:
+    'ForesightCS blends product telemetry, billing posture, support intensity, and account context into a premium operating system for modern customer success teams.',
+  keywords: ['customer success', 'churn prediction', 'revenue intelligence', 'SaaS', 'account health'],
+  openGraph: {
+    title: 'ForesightCS — Predictive Customer Success',
+    description: 'Predict churn before it becomes a revenue event.',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
@@ -28,7 +39,9 @@ export default function RootLayout({
       className={`${inter.variable} ${jetBrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#0a0a0a] text-white">
-        {children}
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );
