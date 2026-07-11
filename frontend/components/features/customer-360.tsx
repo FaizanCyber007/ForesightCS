@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { CheckCircle2, Circle, Mail, Phone, Users, ExternalLink, Calendar, type LucideIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import { useToast } from '@/components/ui/toast';
+
 import { Badge } from '@/components/ui/badge';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatCurrency } from '@/lib/formatters';
@@ -113,6 +115,7 @@ export function Customer360({ customer }: { customer: CustomerDetail }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentHealth, setCurrentHealth] = useState(customer.health);
   const [currentRisk, setCurrentRisk] = useState(customer.churnProbability);
+  const { toast } = useToast();
 
   async function handleRemediation(newHealth: typeof customer.health, newRisk: number) {
     setIsUpdating(true);
@@ -121,7 +124,17 @@ export function Customer360({ customer }: { customer: CustomerDetail }) {
       await updateCustomerHealthAction(customer.id, newHealth, newRisk);
       setCurrentHealth(newHealth);
       setCurrentRisk(newRisk);
-    } catch (e) {
+      toast({
+        title: 'Health Updated',
+        description: `${customer.company} is now marked as ${newHealth}.`,
+        tone: newHealth === 'Healthy' ? 'success' : 'error',
+      });
+    } catch (e: any) {
+      toast({
+        title: 'Update Failed',
+        description: e.message || 'An error occurred while updating the health status.',
+        tone: 'error',
+      });
       console.error(e);
     } finally {
       setIsUpdating(false);
