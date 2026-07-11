@@ -6,7 +6,7 @@
   },
   "publicStats": [
     { "value": "27%", "label": "Average churn reduction" },
-    { "value": "4.3×", "label": "Faster risk intervention" },
+    { "value": "4.3x", "label": "Faster risk intervention" },
     { "value": "98%", "label": "Signal data coverage" },
     { "value": "$2.1B", "label": "ARR protected to date" }
   ],

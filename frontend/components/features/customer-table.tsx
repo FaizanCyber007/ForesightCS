@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowUpDown, ChevronDown, ChevronUp, MoreHorizontal, Search, Users } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, ChevronUp, MoreHorizontal, Search, Users, ExternalLink } from 'lucide-react';
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -89,23 +89,19 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
   ];
 
   return (
-    <GlassCard className="space-y-5">
+    <GlassCard className="space-y-6">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">
-            Accounts
-          </p>
-          <h3 className="mt-2 text-xl font-semibold text-white">
-            Account intelligence table
-          </h3>
+          <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">Accounts portfolio</p>
+          <h3 className="mt-1.5 text-lg font-semibold text-white">Account intelligence ledger</h3>
         </div>
-        <div className="flex flex-wrap gap-3">
-          {/* Search */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Search bar */}
           <label className="relative">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-            <Input
-              className="pl-10 w-48"
-              placeholder="Search accounts"
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+            <input
+              className="h-10 w-52 rounded-xl border border-white/8 bg-black/30 pl-10 pr-4 text-sm text-white placeholder-zinc-500 transition-all focus:border-emerald-400/30 focus:bg-black/50 focus:outline-none focus:ring-1 focus:ring-emerald-400/30"
+              placeholder="Search accounts..."
               value={query}
               onChange={(event) =>
                 startTransition(() => setQuery(event.target.value))
@@ -114,17 +110,17 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
             />
           </label>
 
-          {/* Health filter pills */}
-          <div className="flex items-center gap-1.5 rounded-2xl border border-white/10 bg-white/4 p-1">
+          {/* Health filter segment */}
+          <div className="flex items-center gap-1 rounded-xl border border-white/8 bg-black/20 p-1">
             {HEALTH_OPTIONS.map((option) => (
               <button
                 key={option}
                 onClick={() => setHealthFilter(option)}
                 className={cn(
-                  'rounded-xl px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50',
+                  'rounded-lg px-3 py-1 text-xs font-semibold transition-all',
                   healthFilter === option
-                    ? 'bg-white/10 text-white shadow-sm'
-                    : 'text-zinc-500 hover:text-zinc-200'
+                    ? 'bg-emerald-400/10 text-emerald-300 border border-emerald-400/20'
+                    : 'text-zinc-500 hover:text-zinc-300'
                 )}
                 aria-pressed={healthFilter === option}
               >
@@ -133,42 +129,34 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
             ))}
           </div>
 
-          {/* Sort direction toggle */}
+          {/* Sort direction */}
           <button
-            className="inline-flex h-11 items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 text-sm text-zinc-200 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
+            className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/8 bg-black/20 px-4 text-xs font-semibold text-zinc-300 transition hover:bg-black/40 hover:text-white"
             onClick={() => setAscending((value) => !value)}
             aria-label={ascending ? 'Sort descending' : 'Sort ascending'}
           >
-            <ArrowUpDown className="h-4 w-4" />
+            <ArrowUpDown className="h-3.5 w-3.5" />
             {ascending ? 'Asc' : 'Desc'}
           </button>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-[28px] border border-white/10">
+      <div className="overflow-hidden rounded-2xl border border-white/8 bg-black/10">
         <table
-          className="min-w-full divide-y divide-white/10 text-left text-sm"
+          className="min-w-full divide-y divide-white/8 text-left text-sm"
           role="grid"
           aria-label="Customer account table"
-          aria-rowcount={filtered.length + 1}
         >
-          <thead className="bg-white/4 text-zinc-400">
+          <thead className="bg-white/[0.02] text-xs uppercase tracking-wider text-zinc-500">
             <tr role="row">
               {columns.map(({ key, label }) => (
                 <th
                   key={key}
                   scope="col"
-                  className="px-4 py-4 font-medium"
-                  aria-sort={
-                    sortKey === key
-                      ? ascending
-                        ? 'ascending'
-                        : 'descending'
-                      : 'none'
-                  }
+                  className="px-5 py-3.5 font-semibold"
                 >
                   <button
-                    className="inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50 rounded"
+                    className="inline-flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-400/50 rounded hover:text-zinc-300 transition-colors"
                     onClick={() => handleSort(key)}
                   >
                     {label}
@@ -179,41 +167,38 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
                         <ChevronDown className="h-3.5 w-3.5 text-emerald-300" />
                       )
                     ) : (
-                      <ChevronDown className="h-3.5 w-3.5 opacity-30" />
+                      <ChevronDown className="h-3.5 w-3.5 opacity-20" />
                     )}
                   </button>
                 </th>
               ))}
-              <th scope="col" className="px-4 py-4 text-right font-medium">
-                Actions
+              <th scope="col" className="px-5 py-3.5 text-right font-semibold">
+                Details
               </th>
             </tr>
           </thead>
           <motion.tbody
-            className="divide-y divide-white/10 bg-black/20"
+            className="divide-y divide-white/5 bg-transparent"
             initial={false}
             animate={{ opacity: isPending ? 0.7 : 1 }}
             transition={{ duration: 0.15 }}
           >
-            {filtered.map((customer, rowIndex) => (
-              <motion.tr
+            {filtered.map((customer) => (
+              <tr
                 key={customer.id}
                 role="row"
-                aria-rowindex={rowIndex + 2}
-                layout
                 onClick={() => router.push(`/dashboard/customer/${customer.id}`)}
-                className="cursor-pointer transition-colors hover:bg-white/4 group"
-                whileHover={{ scale: 1.001 }}
+                className="cursor-pointer transition-colors hover:bg-white/[0.03] group"
               >
-                <td className="px-4 py-4" role="gridcell">
+                <td className="px-5 py-4">
                   <div>
-                    <p className="font-medium text-white">{customer.company}</p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="font-semibold text-white group-hover:text-emerald-300 transition-colors">{customer.company}</p>
+                    <p className="text-xs text-zinc-500 mt-0.5">
                       {customer.name} · {customer.segment} · {customer.plan}
                     </p>
                   </div>
                 </td>
-                <td className="px-4 py-4" role="gridcell">
+                <td className="px-5 py-4">
                   <Badge
                     variant={
                       customer.health === 'Healthy'
@@ -226,14 +211,14 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
                     {customer.health}
                   </Badge>
                 </td>
-                <td className="px-4 py-4" role="gridcell">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1.5 w-16 overflow-hidden rounded-full bg-white/10">
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="h-1.5 w-16 overflow-hidden rounded-full bg-white/5">
                       <div
                         className={cn(
                           'h-full rounded-full',
                           customer.churnProbability >= 60
-                            ? 'bg-rose-400'
+                            ? 'bg-rose-500'
                             : customer.churnProbability >= 30
                               ? 'bg-amber-400'
                               : 'bg-emerald-400'
@@ -241,33 +226,27 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
                         style={{ width: `${customer.churnProbability}%` }}
                       />
                     </div>
-                    <span className="font-mono-numeric text-zinc-300">
+                    <span className="font-mono-numeric font-semibold text-zinc-300 text-xs">
                       {customer.churnProbability}%
                     </span>
                   </div>
                 </td>
-                <td className="px-4 py-4 font-mono-numeric text-zinc-300" role="gridcell">
+                <td className="px-5 py-4 font-mono-numeric font-medium text-zinc-300">
                   ${customer.monthlyRecurringRevenue.toLocaleString()}
                 </td>
-                <td className="px-4 py-4 text-zinc-300" role="gridcell">
+                <td className="px-5 py-4 text-zinc-400 text-xs font-medium">
                   {new Date(customer.renewalDate).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',
-                    year: '2-digit',
+                    year: 'numeric',
                   })}
                 </td>
-                <td className="px-4 py-4 text-right" role="gridcell">
-                  <button
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    aria-label={`More options for ${customer.company}`}
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </button>
+                <td className="px-5 py-4 text-right">
+                  <span className="inline-flex h-8 items-center gap-1 rounded-lg border border-white/5 bg-white/5 px-2.5 text-xs font-semibold text-zinc-400 group-hover:border-emerald-400/25 group-hover:bg-emerald-400/10 group-hover:text-emerald-300 transition-all">
+                    View 360 <ExternalLink className="h-3 w-3" />
+                  </span>
                 </td>
-              </motion.tr>
+              </tr>
             ))}
           </motion.tbody>
         </table>
@@ -275,15 +254,15 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
         {/* Empty state */}
         {filtered.length === 0 && (
           <div className="flex flex-col items-center gap-3 px-6 py-16 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-              <Users className="h-5 w-5 text-zinc-500" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/8 bg-black/20 text-zinc-500">
+              <Users className="h-5 w-5" />
             </div>
-            <p className="font-medium text-white">No accounts found</p>
-            <p className="text-sm text-zinc-500">
-              Try a different search term or filter combination.
+            <p className="font-medium text-white">No accounts matched filters</p>
+            <p className="text-sm text-zinc-500 max-w-[280px]">
+              Try refining your search terms or selecting 'All' health options.
             </p>
             <button
-              className="mt-2 text-sm text-emerald-300 hover:text-emerald-200 transition-colors"
+              className="mt-2 text-xs font-semibold text-emerald-300 hover:text-emerald-200 transition-colors"
               onClick={() => {
                 setQuery('');
                 setHealthFilter('All');
@@ -295,10 +274,10 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
         )}
       </div>
 
-      <div className="flex items-center justify-between text-sm text-zinc-500">
+      <div className="flex items-center justify-between text-xs text-zinc-500 font-medium pt-2">
         <p>
-          Showing <span className="text-white font-medium">{filtered.length}</span> of{' '}
-          <span className="text-white font-medium">{customers.length}</span> accounts
+          Showing <span className="text-zinc-200 font-semibold">{filtered.length}</span> of{' '}
+          <span className="text-zinc-200 font-semibold">{customers.length}</span> accounts in scope
         </p>
         {filtered.length < customers.length && (
           <button

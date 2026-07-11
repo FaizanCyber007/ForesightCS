@@ -110,24 +110,65 @@ export function Customer360({ customer }: { customer: CustomerDetail }) {
     signal: '#60a5fa',
   };
 
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [currentHealth, setCurrentHealth] = useState(customer.health);
+  const [currentRisk, setCurrentRisk] = useState(customer.churnProbability);
+
+  async function handleRemediation(newHealth: typeof customer.health, newRisk: number) {
+    setIsUpdating(true);
+    try {
+      const { updateCustomerHealthAction } = await import('@/app/actions');
+      await updateCustomerHealthAction(customer.id, newHealth, newRisk);
+      setCurrentHealth(newHealth);
+      setCurrentRisk(newRisk);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header card */}
       <GlassCard className="space-y-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-zinc-500">
-              Customer 360
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold text-white">
-              {customer.company}
-            </h1>
-            <p className="mt-1 text-zinc-400">
-              {customer.name} · {customer.segment} · Owned by{' '}
-              <span className="text-zinc-200">{customer.owner}</span>
-            </p>
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm uppercase tracking-[0.35em] text-zinc-500">
+                Customer 360
+              </p>
+              <h1 className="mt-2 text-3xl font-semibold text-white">
+                {customer.company}
+              </h1>
+              <p className="mt-1 text-zinc-400">
+                {customer.name} · {customer.segment} · Owned by{' '}
+                <span className="text-zinc-200">{customer.owner}</span>
+              </p>
+            </div>
+            {/* Quick interactive actions simulating live backend updates */}
+            <div className="flex flex-wrap gap-2 pt-1">
+              {currentHealth !== 'Healthy' && (
+                <button
+                  disabled={isUpdating}
+                  onClick={() => handleRemediation('Healthy', 5)}
+                  className="rounded-full bg-emerald-500/10 border border-emerald-400/30 text-emerald-300 text-xs font-semibold px-3 py-1.5 hover:bg-emerald-500/20 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {isUpdating ? 'Saving...' : '🛡️ Remediate health (Mark Healthy)'}
+                </button>
+              )}
+              {currentHealth !== 'Critical' && (
+                <button
+                  disabled={isUpdating}
+                  onClick={() => handleRemediation('Critical', 85)}
+                  className="rounded-full bg-rose-500/10 border border-rose-400/30 text-rose-300 text-xs font-semibold px-3 py-1.5 hover:bg-rose-500/20 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {isUpdating ? 'Saving...' : '⚠️ Simulate churn risk (Mark Critical)'}
+                </button>
+              )}
+            </div>
           </div>
-          <HealthGauge score={customer.engagementScore} health={customer.health} />
+          <HealthGauge score={customer.engagementScore} health={currentHealth} />
         </div>
 
         {/* Key metrics row */}
@@ -135,8 +176,8 @@ export function Customer360({ customer }: { customer: CustomerDetail }) {
           {[
             { label: 'MRR', value: formatCurrency(customer.monthlyRecurringRevenue) },
             { label: 'ACV', value: formatCurrency(customer.annualContractValue) },
-            { label: 'Billing', value: customer.billingStatus },
-            { label: 'Churn risk', value: `${customer.churnProbability}%` },
+            { label: 'Billing', value: currentHealth === 'Critical' ? 'Past Due' : 'Current' },
+            { label: 'Churn risk', value: `${currentRisk}%` },
             { label: 'NPS', value: customer.netPromoterScore > 0 ? `+${customer.netPromoterScore}` : String(customer.netPromoterScore) },
           ].map(({ label, value }) => (
             <div

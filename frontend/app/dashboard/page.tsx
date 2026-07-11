@@ -1,22 +1,16 @@
-import { Bell, Bot, Crown, TrendingUp } from 'lucide-react';
+import { Bell, Bot, Crown, TrendingUp, Sparkles, ShieldAlert, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 import { DashboardMetrics } from '@/components/features/dashboard-metrics';
 import { AIInsights } from '@/components/features/ai-insights';
 import { CustomerTable } from '@/components/features/customer-table';
-import { MetricCharts } from '@/components/features/metric-charts';
+import { AreaRevenueChart, DonutHealthChart } from '@/components/features/metric-charts';
 import { SignalFeed } from '@/components/features/signal-feed';
 import { GlassCard } from '@/components/ui/glass-card';
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { getDashboardSummary, getTopRiskAccounts } from '@/services/api';
 
 export const dynamic = 'force-dynamic';
-
-const headerActions = [
-  { icon: Crown, label: 'Saved ARR', value: '$1.84M' },
-  { icon: TrendingUp, label: 'Expansion', value: '$420K' },
-  { icon: Bell, label: 'Alerts', value: '3' },
-  { icon: Bot, label: 'AI summary', value: 'Ready' },
-];
 
 export default async function DashboardPage() {
   const [summary, risks] = await Promise.all([
@@ -25,90 +19,95 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <PageWrapper className="space-y-8 py-8 lg:py-10">
-      <section className="space-y-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-zinc-500">
-              Command Center
-            </p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white">
-              Predictive account health
-            </h1>
-            <p className="mt-3 max-w-2xl text-zinc-400">
-              Live accounts, risk clusters, and expansion signals captured in
-              one revenue intelligence surface.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {headerActions.map(({ icon: Icon, label, value }) => (
-              <GlassCard
-                key={label}
-                hoverable
-                className="flex items-center gap-3 rounded-3xl px-4 py-3 text-sm"
-              >
-                <Icon className="h-4 w-4 text-emerald-300" />
-                <div>
-                  <p className="text-zinc-500 text-xs">{label}</p>
-                  <p className="font-mono-numeric font-semibold text-white text-sm">{value}</p>
-                </div>
-              </GlassCard>
-            ))}
-          </div>
+    <PageWrapper className="py-6 space-y-6">
+      {/* Header Area */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/5 pb-4">
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-zinc-500 font-bold">Workspace command center</p>
+          <h1 className="text-3xl font-extrabold tracking-tight text-white mt-0.5">Revenue Intelligence Cockpit</h1>
         </div>
-        <DashboardMetrics metrics={summary.metrics} />
-      </section>
-
-      {/* Charts + Signal Feed */}
-      <section className="grid gap-4 xl:grid-cols-[1fr_340px]">
-        <MetricCharts
-          trends={summary.monthlyTrends}
-          distribution={summary.healthDistribution}
-        />
-        <div className="space-y-4">
-          <AIInsights />
-          <SignalFeed />
+        <div className="flex items-center gap-2 text-xs text-emerald-300 border border-emerald-400/20 bg-emerald-400/8 rounded-full px-3 py-1 font-semibold">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          Signals connected · Real-time sync active
         </div>
-      </section>
+      </div>
 
-      {/* Customer Table */}
-      <CustomerTable customers={summary.customers} />
+      {/* Main double column cockpit layout */}
+      <div className="grid gap-6 xl:grid-cols-[1fr_320px] items-start">
+        
+        {/* ── LEFT COLUMN: Metrics, Charts, Tables ── */}
+        <div className="space-y-6 min-w-0">
+          {/* Low profile KPI metrics strip */}
+          <DashboardMetrics metrics={summary.metrics} />
 
-      {/* Priority watch */}
-      <section className="grid gap-4 md:grid-cols-3">
-        {risks.map((account) => (
-          <GlassCard key={account.id} hoverable className="space-y-3">
-            <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">
-              Priority watch
-            </p>
-            <div className="flex items-center justify-between gap-3">
-              <h3 className="text-xl font-semibold text-white">
-                {account.company}
-              </h3>
-              <span
-                className={
-                  account.churnProbability >= 60
-                    ? 'rounded-full bg-rose-500/20 px-2 py-1 text-xs text-rose-300 border border-rose-500/30'
-                    : 'rounded-full bg-amber-500/20 px-2 py-1 text-xs text-amber-300 border border-amber-500/30'
-                }
-              >
-                {account.churnProbability}% risk
+          {/* Revenue Chart */}
+          <AreaRevenueChart trends={summary.monthlyTrends} />
+
+          {/* Core Customer Ledger Table */}
+          <CustomerTable customers={summary.customers} />
+        </div>
+
+        {/* ── RIGHT COLUMN: Health snapshot, watchlist, actions, feeds ── */}
+        <div className="space-y-6">
+          {/* Donut chart snapshot */}
+          <DonutHealthChart distribution={summary.healthDistribution} />
+
+          {/* Sleek Priority Watchlist (no large cards) */}
+          <div className="rounded-2xl border border-white/8 bg-[#0c0c0f]/40 p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShieldAlert className="h-4 w-4 text-rose-400" />
+                <h3 className="text-xs uppercase tracking-wider text-zinc-400 font-bold">Priority Watchlist</h3>
+              </div>
+              <span className="font-mono-numeric text-[10px] border border-rose-400/20 bg-rose-400/8 text-rose-300 rounded px-1.5 py-0.5">
+                {risks.length} at risk
               </span>
             </div>
-            <p className="text-sm text-zinc-400">
-              {account.name} · {account.health} health
-            </p>
-            <p className="text-sm text-zinc-500">
-              Owned by <span className="text-zinc-300">{account.owner}</span>. Renewal{' '}
-              {new Date(account.renewalDate).toLocaleDateString('en-US', {
-                month: 'short',
-                year: 'numeric',
+
+            <div className="space-y-2.5">
+              {risks.map((account) => {
+                const isCritical = account.churnProbability >= 60;
+                return (
+                  <div key={account.id} className="group relative rounded-xl border border-white/5 bg-black/25 p-3 hover:border-white/12 transition-all">
+                    {/* Left indicator bar */}
+                    <div className={`absolute left-0 inset-y-0 w-1 rounded-l-xl ${
+                      isCritical ? 'bg-rose-500' : 'bg-amber-400'
+                    }`} />
+                    
+                    <div className="pl-1.5 space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
+                          {account.company}
+                        </p>
+                        <span className={`font-mono-numeric text-[9px] font-bold ${isCritical ? 'text-rose-400' : 'text-amber-400'}`}>
+                          {account.churnProbability}% risk
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-[10px] text-zinc-500">
+                        <span>Owner: {account.owner}</span>
+                        <Link
+                          href={`/dashboard/customer/${account.id}`}
+                          className="inline-flex items-center gap-0.5 text-emerald-400 hover:text-emerald-300 font-semibold"
+                        >
+                          Outreach <ArrowRight className="h-2.5 w-2.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
               })}
-              .
-            </p>
-          </GlassCard>
-        ))}
-      </section>
+            </div>
+          </div>
+
+          {/* AI recommendations */}
+          <AIInsights />
+
+          {/* Live signal activity feed */}
+          <SignalFeed />
+        </div>
+
+      </div>
     </PageWrapper>
   );
 }
