@@ -65,12 +65,9 @@ export function DashboardHeader() {
               type="button"
               onClick={() => setCmdOpen(true)}
               className="h-9 w-64 cursor-text rounded-full border border-white/10 bg-white/5 pl-9 pr-4 text-left text-sm text-zinc-500 transition-all hover:border-white/20 hover:bg-white/8 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
-              aria-label="Open command palette (⌘K)"
+              aria-label="Open command palette)"
             >
               Search…{' '}
-              <kbd className="ml-1 rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-zinc-600">
-                ⌘K
-              </kbd>
             </button>
           </div>
           {/* Mobile search button */}

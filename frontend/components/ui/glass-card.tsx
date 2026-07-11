@@ -14,9 +14,11 @@ export function GlassCard({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl',
+        'relative overflow-hidden rounded-[28px] border border-white/8 bg-zinc-900/40 p-6 shadow-[0_24px_64px_rgba(0,0,0,0.6)] backdrop-blur-2xl transition-all duration-300',
+        // Ambient inside-card gradient
+        'before:absolute before:inset-0 before:-z-10 before:bg-gradient-to-b before:from-white/[0.03] before:to-transparent',
         hoverable &&
-          'transition-transform duration-300 hover:-translate-y-1 hover:border-emerald-400/25 hover:bg-white/[0.06]',
+          'hover:-translate-y-1 hover:border-emerald-400/20 hover:bg-zinc-900/50 hover:shadow-[0_32px_80px_rgba(16,185,129,0.08)] active:translate-y-0',
         className
       )}
       {...props}

@@ -93,7 +93,15 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       {/* Right column: header + main */}
-      <div className="flex min-w-0 flex-col">
+      <div className="flex min-w-0 flex-col relative overflow-hidden">
+        {/* Ambient radial glows behind all dashboard screens */}
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute right-0 top-0 h-[400px] w-[600px] bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.06),rgba(139,92,246,0.04),transparent_60%)]" />
+          <div className="absolute left-1/4 bottom-0 h-[300px] w-[500px] bg-[radial-gradient(circle_at_bottom_left,rgba(99,102,241,0.04),transparent_65%)]" />
+          {/* Subtle grid background */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:48px_48px]" />
+        </div>
+
         <div className="sticky top-0 z-40 flex items-center gap-0 border-b border-white/10 bg-[#0a0a0a]/80 backdrop-blur-xl">
           {/* Mobile burger — only visible on small screens */}
           <button

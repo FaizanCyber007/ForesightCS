@@ -84,23 +84,26 @@ export function PricingContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
               whileHover={reduceMotion ? undefined : { y: -6 }}
+              className="relative"
             >
+              {/* Badge rendered OUTSIDE the card so it doesn't get clipped */}
+              {tier.highlighted && (
+                <div className="absolute -top-4 left-1/2 z-10 -translate-x-1/2">
+                  <span className="flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-[#0d1810] px-3 py-1 text-xs text-emerald-200 shadow-[0_0_16px_rgba(16,185,129,0.3)]">
+                    <Sparkles className="h-3 w-3" />
+                    Most popular
+                  </span>
+                </div>
+              )}
               <GlassCard
                 hoverable
                 className={cn(
                   'relative flex h-full flex-col',
-                  tier.highlighted &&
-                    'border-emerald-400/30 bg-emerald-400/5 shadow-[0_0_60px_rgba(52,211,153,0.12)]'
+                  tier.highlighted
+                    ? 'border-emerald-400/30 bg-emerald-400/5 pt-8 shadow-[0_0_60px_rgba(52,211,153,0.12)]'
+                    : ''
                 )}
               >
-                {tier.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/15 px-3 py-1 text-xs text-emerald-200">
-                      <Sparkles className="h-3 w-3" />
-                      Most popular
-                    </span>
-                  </div>
-                )}
                 <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">
                   {tier.name}
                 </p>
@@ -132,7 +135,7 @@ export function PricingContent() {
 
                 <Button
                   className="w-full"
-                  variant={tier.highlighted ? 'primary' : 'secondary'}
+                  variant={tier.highlighted ? 'brand' : 'secondary'}
                   asChild
                 >
                   <Link href={tier.price === 'Custom' ? '/contact' : '/register'}>

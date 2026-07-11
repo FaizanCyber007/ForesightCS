@@ -24,7 +24,7 @@ interface CommandPaletteProps {
 }
 
 /**
- * A keyboard-first ⌘K command palette for fast navigation and account lookup.
+ * A keyboard-first command palette for fast navigation and account lookup.
  * Supports both controlled (open/onClose props) and uncontrolled (own keyboard
  * shortcut) modes. Provides fuzzy substring filtering and full roving-keyboard
  * control with ARIA dialog semantics.

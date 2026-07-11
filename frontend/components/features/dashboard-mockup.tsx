@@ -251,12 +251,17 @@ export function DashboardMockup() {
                 {[55, 62, 58, 71, 79, 88, 92, 95].map((h, i) => (
                   <motion.div
                     key={`${tick}-${i}`}
-                    className="flex-1 rounded-sm"
-                    style={{ background: i === 7 ? 'linear-gradient(to top, #10b981, #34d399)' : 'rgba(52,211,153,0.18)' }}
                     initial={{ height: 0 }}
                     animate={{ height: `${h}%` }}
                     transition={{ duration: 0.5, delay: i * 0.04, ease: 'easeOut' }}
-                    style={{ alignSelf: 'flex-end', flex: 1, borderRadius: '3px', background: i === 7 ? 'linear-gradient(to top, #10b981, #34d399)' : 'rgba(52,211,153,0.18)' }}
+                    style={{
+                      alignSelf: 'flex-end',
+                      flex: 1,
+                      borderRadius: '3px',
+                      background: i === 7
+                        ? 'linear-gradient(to top, #10b981, #34d399)'
+                        : 'rgba(52,211,153,0.18)',
+                    }}
                   />
                 ))}
               </div>
