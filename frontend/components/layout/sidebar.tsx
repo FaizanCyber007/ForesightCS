@@ -4,12 +4,11 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   BarChart3,
-  Bot,
+  CheckSquare,
   ChevronRight,
   LayoutDashboard,
   LogOut,
   Settings,
-  Shield,
   ShieldAlert,
   Users,
   Zap,
@@ -25,6 +24,12 @@ const primaryNav = [
     label: 'Command Center',
     icon: LayoutDashboard,
     exact: true,
+  },
+  {
+    href: '/dashboard/tasks',
+    label: 'Inbox / Tasks',
+    icon: CheckSquare,
+    exact: false,
   },
   {
     href: '/dashboard/accounts',

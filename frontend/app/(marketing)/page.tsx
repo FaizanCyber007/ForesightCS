@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, CheckCircle2, Play, ShieldCheck, TrendingUp, Zap } from 'lucide-react';
+import { ArrowRight, Play, ShieldCheck, TrendingUp, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { motion, useReducedMotion } from 'framer-motion';
 

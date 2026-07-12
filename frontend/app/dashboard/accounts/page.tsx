@@ -2,7 +2,7 @@ import { getCustomers } from '@/services/api';
 import { CustomerTable } from '@/components/features/customer-table';
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { GlassCard } from '@/components/ui/glass-card';
-import { Users, TrendingDown, TrendingUp, ShieldAlert, Sparkles } from 'lucide-react';
+import { Users, TrendingDown, TrendingUp, ShieldAlert } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 

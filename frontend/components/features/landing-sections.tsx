@@ -19,13 +19,11 @@ import {
 import { motion, useReducedMotion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
-import { GlassCard } from '@/components/ui/glass-card';
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import mockData from '@/data/mock-data.json';
 
-const { landingTestimonials, howItWorks, integrations } = mockData as typeof mockData & {
+const { landingTestimonials } = mockData as typeof mockData & {
   landingTestimonials: { quote: string; name: string; title: string; company: string }[];
-  howItWorks: { step: string; title: string; description: string }[];
   integrations: { name: string; category: string }[];
 };
 
@@ -61,9 +59,9 @@ const features = [
   },
   {
     icon: Users,
-    title: 'Customer 360 with live timeline',
+    title: 'Customer 360 & Interactive Timeline',
     description:
-      'Every account has a live profile: health score history, support ticket trends, billing posture, NPS trajectory, and a timestamped timeline of every meaningful event.',
+      'Every account has a live profile: health score, key contacts, support trends, and an interactive timeline where you can log notes and activities directly from the UI.',
     highlight: false,
     stat: 'Zero tab-switching',
     color: 'amber',
@@ -78,12 +76,12 @@ const features = [
     color: 'rose',
   },
   {
-    icon: LineChart,
-    title: 'CS team performance analytics',
+    icon: CheckCircle2,
+    title: 'Actionable Inbox & Tasks Workflow',
     description:
-      'See which CSMs have the healthiest portfolios, measure save-play success rates, track QBR completion, and benchmark your team against historical performance.',
+      'A unified workflow module that aggregates system alerts, playbook deadlines, and manual tasks into a prioritized, actionable inbox with optimistic UI updates.',
     highlight: false,
-    stat: 'Built for VP CS reporting',
+    stat: 'Prioritized daily workflow',
     color: 'teal',
   },
 ];
@@ -176,7 +174,7 @@ export function LandingSections() {
                 <SectionLabel>The problem</SectionLabel>
                 <h2 className="text-4xl font-semibold tracking-tight text-white leading-tight">
                   Your customers are leaving.<br />
-                  <span className="text-zinc-500">You're finding out too late.</span>
+                  <span className="text-zinc-500">You&apos;re finding out too late.</span>
                 </h2>
                 <p className="text-lg text-zinc-400 leading-8">
                   Most CS teams manage churn reactively — fielding cancellation calls, fighting fires, and hoping the renewal comes through. Sound familiar?
@@ -426,11 +424,10 @@ export function LandingSections() {
                     ].map((task, i) => (
                       <div key={task.task} className="flex items-start gap-2.5">
                         <div className="flex flex-col items-center mt-0.5">
-                          <div className={`h-4 w-4 rounded-full border flex items-center justify-center ${
-                            task.status === 'done' ? 'border-emerald-400/40 bg-emerald-400/20' :
-                            task.status === 'active' ? 'border-violet-400/40 bg-violet-400/20' :
-                            'border-white/15 bg-white/5'
-                          }`}>
+                          <div className={`h-4 w-4 rounded-full border flex items-center justify-center ${task.status === 'done' ? 'border-emerald-400/40 bg-emerald-400/20' :
+                              task.status === 'active' ? 'border-violet-400/40 bg-violet-400/20' :
+                                'border-white/15 bg-white/5'
+                            }`}>
                             {task.status === 'done' && <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />}
                             {task.status === 'active' && <div className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />}
                           </div>
@@ -470,7 +467,7 @@ export function LandingSections() {
             <SectionLabel>Platform capabilities</SectionLabel>
             <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <h2 className="text-4xl font-semibold tracking-tight text-white max-w-xl">
-                One platform that replaces five CS tools
+                One platform that replaces six CS tools
               </h2>
               <p className="max-w-sm text-zinc-400 lg:text-right">
                 Stop stitching together spreadsheets, CRM plugins, and shared docs. ForesightCS is your unified intelligence layer.
@@ -556,6 +553,69 @@ export function LandingSections() {
         </PageWrapper>
       </section>
 
+{/* ═══════════════════════════════════════════════════════════
+          SECTION 5 — Integrations (logo grid, visual heavy)
+      ══════════════════════════════════════════════════════════ */}
+      <section className="border-t border-white/5 bg-[#060608] py-24">
+        <PageWrapper className="space-y-12">
+          <motion.div className="text-center space-y-4" {...scrollAnim}>
+            <SectionLabel color="amber">Integrations</SectionLabel>
+            <h2 className="text-3xl font-semibold tracking-tight text-white">
+              Connects to every tool your team already uses
+            </h2>
+            <p className="mx-auto max-w-xl text-zinc-400">
+              No rip-and-replace. ForesightCS sits on top of your existing stack — CRM, billing, support, and product analytics syncing in real-time.
+            </p>
+          </motion.div>
+
+          {/* Horizontal Scrolling Marquee */}
+          <div className="relative flex w-full overflow-hidden py-4 [mask-image:linear-gradient(to_right,transparent,white_10%,white_90%,transparent)]">
+            <motion.div
+              className="flex shrink-0 items-center gap-4 px-2"
+              animate={{ x: ['0%', '-50%'] }}
+              transition={{ repeat: Infinity, ease: 'linear', duration: 40 }}
+            >
+              {[
+                { name: 'Salesforce', cat: 'CRM', color: 'text-blue-300 border-blue-400/20 bg-blue-400/8' },
+                { name: 'HubSpot', cat: 'CRM', color: 'text-orange-300 border-orange-400/20 bg-orange-400/8' },
+                { name: 'Stripe', cat: 'Billing', color: 'text-violet-300 border-violet-400/20 bg-violet-400/8' },
+                { name: 'Chargebee', cat: 'Billing', color: 'text-blue-300 border-blue-400/20 bg-blue-400/8' },
+                { name: 'Zendesk', cat: 'Support', color: 'text-green-300 border-green-400/20 bg-green-400/8' },
+                { name: 'Intercom', cat: 'Support', color: 'text-indigo-300 border-indigo-400/20 bg-indigo-400/8' },
+                { name: 'Mixpanel', cat: 'Analytics', color: 'text-rose-300 border-rose-400/20 bg-rose-400/8' },
+                { name: 'Segment', cat: 'Data', color: 'text-emerald-300 border-emerald-400/20 bg-emerald-400/8' },
+                // Duplicate for infinite scroll effect
+                { name: 'Salesforce', cat: 'CRM', color: 'text-blue-300 border-blue-400/20 bg-blue-400/8' },
+                { name: 'HubSpot', cat: 'CRM', color: 'text-orange-300 border-orange-400/20 bg-orange-400/8' },
+                { name: 'Stripe', cat: 'Billing', color: 'text-violet-300 border-violet-400/20 bg-violet-400/8' },
+                { name: 'Chargebee', cat: 'Billing', color: 'text-blue-300 border-blue-400/20 bg-blue-400/8' },
+                { name: 'Zendesk', cat: 'Support', color: 'text-green-300 border-green-400/20 bg-green-400/8' },
+                { name: 'Intercom', cat: 'Support', color: 'text-indigo-300 border-indigo-400/20 bg-indigo-400/8' },
+                { name: 'Mixpanel', cat: 'Analytics', color: 'text-rose-300 border-rose-400/20 bg-rose-400/8' },
+                { name: 'Segment', cat: 'Data', color: 'text-emerald-300 border-emerald-400/20 bg-emerald-400/8' },
+              ].map((item, i) => (
+                <div
+                  key={`${item.name}-${i}`}
+                  className={`flex w-[200px] shrink-0 items-center gap-3 rounded-2xl border px-4 py-3 ${item.color} bg-black/40 transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]`}
+                >
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-current/20 bg-current/10 text-[10px] font-bold">
+                    {item.name[0]}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">{item.name}</p>
+                    <p className="truncate text-[10px] opacity-60">{item.cat}</p>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          <motion.p className="text-center text-sm text-zinc-600" {...scrollAnim}>
+            + 40 more integrations via REST API and webhooks
+          </motion.p>
+        </PageWrapper>
+      </section>
+      
       {/* ═══════════════════════════════════════════════════════════
           SECTION 4 — Testimonials (horizontal scrolling ticker)
       ══════════════════════════════════════════════════════════ */}
@@ -567,7 +627,7 @@ export function LandingSections() {
               Real outcomes from real CS teams
             </h2>
             <p className="mx-auto max-w-xl text-zinc-400">
-              From 2-person startups to 50-person CS orgs — here's what teams say after switching to a signal-first approach.
+              From 2-person startups to 50-person CS orgs — here&apos;s what teams say after switching to a signal-first approach.
             </p>
           </motion.div>
 
@@ -655,180 +715,7 @@ export function LandingSections() {
         </PageWrapper>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════
-          SECTION 5 — Integrations (logo grid, visual heavy)
-      ══════════════════════════════════════════════════════════ */}
-      <section className="border-t border-white/5 bg-[#060608] py-24">
-        <PageWrapper className="space-y-12">
-          <motion.div className="text-center space-y-4" {...scrollAnim}>
-            <SectionLabel color="amber">Integrations</SectionLabel>
-            <h2 className="text-3xl font-semibold tracking-tight text-white">
-              Connects to every tool your team already uses
-            </h2>
-            <p className="mx-auto max-w-xl text-zinc-400">
-              No rip-and-replace. ForesightCS sits on top of your existing stack — CRM, billing, support, and product analytics syncing in real-time.
-            </p>
-          </motion.div>
-
-          {/* Integration categories */}
-          <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-            {[
-              { name: 'Salesforce', cat: 'CRM', color: 'text-blue-300 border-blue-400/20 bg-blue-400/8' },
-              { name: 'HubSpot', cat: 'CRM', color: 'text-orange-300 border-orange-400/20 bg-orange-400/8' },
-              { name: 'Stripe', cat: 'Billing', color: 'text-violet-300 border-violet-400/20 bg-violet-400/8' },
-              { name: 'Chargebee', cat: 'Billing', color: 'text-blue-300 border-blue-400/20 bg-blue-400/8' },
-              { name: 'Zendesk', cat: 'Support', color: 'text-green-300 border-green-400/20 bg-green-400/8' },
-              { name: 'Intercom', cat: 'Support', color: 'text-indigo-300 border-indigo-400/20 bg-indigo-400/8' },
-              { name: 'Mixpanel', cat: 'Analytics', color: 'text-rose-300 border-rose-400/20 bg-rose-400/8' },
-              { name: 'Segment', cat: 'Data', color: 'text-emerald-300 border-emerald-400/20 bg-emerald-400/8' },
-            ].map((item, i) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05, duration: 0.4 }}
-                className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${item.color} transition-all hover:-translate-y-1 hover:shadow-lg`}
-              >
-                <div className="h-7 w-7 rounded-lg border border-current/20 bg-current/10 flex items-center justify-center text-[10px] font-bold">
-                  {item.name[0]}
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{item.name}</p>
-                  <p className="text-[10px] opacity-60">{item.cat}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.p className="text-center text-sm text-zinc-600" {...scrollAnim}>
-            + 40 more integrations via REST API and webhooks
-          </motion.p>
-        </PageWrapper>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════
-          SECTION 6 — Pricing (improved, with gradient divider)
-      ══════════════════════════════════════════════════════════ */}
-      <section className="relative border-t border-white/5 py-28 overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.07),transparent_65%)]" />
-        <PageWrapper className="relative space-y-16">
-          <motion.div className="text-center space-y-4" {...scrollAnim}>
-            <SectionLabel color="violet">Pricing</SectionLabel>
-            <h2 className="text-4xl font-semibold tracking-tight text-white">
-              Pricing that scales with your retention
-            </h2>
-            <p className="mx-auto max-w-xl text-zinc-400">
-              Start free. Upgrade when you need it. No hidden setup fees.
-            </p>
-          </motion.div>
-
-          <div className="mx-auto max-w-5xl grid gap-6 lg:grid-cols-3 items-start pt-6">
-            {pricingTiers.map((tier, i) => (
-              <motion.div
-                key={tier.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="relative"
-              >
-                {tier.highlighted && (
-                  <div className="absolute -top-4 left-1/2 z-10 -translate-x-1/2">
-                    <span className="flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-[#0d1810] px-3 py-1 text-xs text-emerald-200 shadow-[0_0_16px_rgba(16,185,129,0.3)]">
-                      <Sparkles className="h-3 w-3" /> Most popular
-                    </span>
-                  </div>
-                )}
-                <div className={`h-full rounded-[24px] border p-7 flex flex-col space-y-6 ${tier.highlighted ? 'border-emerald-400/30 bg-emerald-400/5 shadow-[0_0_60px_rgba(16,185,129,0.1)] pt-10' : 'border-white/8 bg-white/[0.03]'}`}>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.4em] text-zinc-500">{tier.name}</p>
-                    <div className="mt-3 flex items-end gap-1">
-                      <p className="font-mono-numeric text-5xl font-bold text-white">{tier.price}</p>
-                      {tier.period && <p className="mb-1.5 text-lg text-zinc-500">{tier.period}</p>}
-                    </div>
-                    <p className="mt-3 text-sm text-zinc-400">{tier.description}</p>
-                  </div>
-
-                  <div className="flex-1 space-y-3">
-                    {tier.features.map((f) => (
-                      <div key={f} className="flex items-center gap-2.5">
-                        <CheckCircle2 className={`h-4 w-4 shrink-0 ${tier.highlighted ? 'text-emerald-400' : 'text-zinc-600'}`} />
-                        <span className="text-sm text-zinc-300">{f}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Button
-                    variant={tier.highlighted ? 'brand' : 'secondary'}
-                    className="w-full"
-                    asChild
-                  >
-                    <Link href={tier.href}>{tier.cta}</Link>
-                  </Button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <p className="text-center text-sm text-zinc-600">
-            All plans include a 14-day free trial. No credit card required.{' '}
-            <Link href="/contact" className="text-emerald-400 hover:text-emerald-300 transition-colors">
-              Talk to sales →
-            </Link>
-          </p>
-        </PageWrapper>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════
-          SECTION 7 — Final CTA (full-width gradient band)
-      ══════════════════════════════════════════════════════════ */}
-      <section className="border-t border-white/5 bg-[#060608]">
-        <PageWrapper className="py-28">
-          <motion.div
-            className="relative mx-auto max-w-4xl overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-emerald-500/10 via-[#0a0a0f] to-violet-600/10 p-12 text-center"
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Ambient glow */}
-            <div className="pointer-events-none absolute -top-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-emerald-400/15 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-24 left-1/4 h-48 w-48 rounded-full bg-violet-400/10 blur-3xl" />
-
-            <div className="relative space-y-6">
-              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/8 px-4 py-1.5 text-sm text-emerald-300">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-                Free 14-day trial — no credit card
-              </span>
-              <h2 className="text-4xl font-semibold tracking-tight text-white lg:text-5xl">
-                Start protecting your revenue today
-              </h2>
-              <p className="mx-auto max-w-xl text-lg text-zinc-400">
-                Join 400+ CS teams using ForesightCS to identify churn risk weeks before it becomes a cancellation call.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-                <Button size="xl" variant="brand" asChild>
-                  <Link href="/register">
-                    Get started free <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button size="xl" variant="secondary" asChild>
-                  <Link href="/contact">Talk to sales</Link>
-                </Button>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-6 pt-2 text-sm text-zinc-500">
-                {['SOC 2 Type II', 'GDPR compliant', 'Setup in under a day', 'Cancel anytime'].map((item) => (
-                  <div key={item} className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-zinc-600" />
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </PageWrapper>
-      </section>
+      
     </div>
   );
 }

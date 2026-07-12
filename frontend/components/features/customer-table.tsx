@@ -1,13 +1,12 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowUpDown, ChevronDown, ChevronUp, MoreHorizontal, Search, Users, ExternalLink } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, ChevronUp, Search, Users, ExternalLink } from 'lucide-react';
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
 import { GlassCard } from '@/components/ui/glass-card';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/cn';
 import type { CustomerRecord, HealthStatus } from '@/services/api';
 
@@ -259,7 +258,7 @@ export function CustomerTable({ customers }: { customers: CustomerRecord[] }) {
             </div>
             <p className="font-medium text-white">No accounts matched filters</p>
             <p className="text-sm text-zinc-500 max-w-[280px]">
-              Try refining your search terms or selecting 'All' health options.
+              Try refining your search terms or selecting &apos;All&apos; health options.
             </p>
             <button
               className="mt-2 text-xs font-semibold text-emerald-300 hover:text-emerald-200 transition-colors"

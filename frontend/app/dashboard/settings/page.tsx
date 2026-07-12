@@ -5,7 +5,6 @@ import {
   Bell,
   Building2,
   ChevronRight,
-  Globe,
   Key,
   Shield,
   User,
@@ -177,30 +176,9 @@ export default function SettingsPage() {
                       { label: 'Renewal reminders', description: 'Alert 90, 60, and 30 days before renewal', defaultOn: true },
                       { label: 'Playbook triggers', description: 'Notify when a playbook activates on your accounts', defaultOn: false },
                       { label: 'Weekly digest', description: 'Summary of portfolio health every Monday', defaultOn: true },
-                    ].map((pref) => {
-                      const [on, setOn] = useState(pref.defaultOn);
-                      return (
-                        <div key={pref.label} className="flex items-center justify-between rounded-xl border border-white/8 bg-black/20 px-4 py-3">
-                          <div>
-                            <p className="text-xs font-semibold text-white">{pref.label}</p>
-                            <p className="text-[10px] text-zinc-500 mt-0.5 leading-relaxed">{pref.description}</p>
-                          </div>
-                          <button
-                            onClick={() => setOn(!on)}
-                            className={cn(
-                              'h-5 w-9 rounded-full border transition-colors flex items-center',
-                              on ? 'border-emerald-400/30 bg-emerald-500/80' : 'border-white/15 bg-white/10'
-                            )}
-                            aria-label={`Toggle ${pref.label}`}
-                          >
-                            <span className={cn(
-                              'block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform',
-                              on ? 'translate-x-[16px]' : 'translate-x-[2px]'
-                            )} />
-                          </button>
-                        </div>
-                      );
-                    })}
+                    ].map((pref) => (
+                      <NotificationToggle key={pref.label} pref={pref} />
+                    ))}
                   </div>
                   <Button onClick={handleSave} variant="brand" className="h-10 text-xs">Save notification settings</Button>
                 </GlassCard>
@@ -258,5 +236,30 @@ export default function SettingsPage() {
         </div>
       </div>
     </PageWrapper>
+  );
+}
+
+function NotificationToggle({ pref }: { pref: { label: string; description: string; defaultOn: boolean } }) {
+  const [on, setOn] = useState(pref.defaultOn);
+  return (
+    <div className="flex items-center justify-between rounded-xl border border-white/8 bg-black/20 px-4 py-3">
+      <div>
+        <p className="text-xs font-semibold text-white">{pref.label}</p>
+        <p className="text-[10px] text-zinc-500 mt-0.5 leading-relaxed">{pref.description}</p>
+      </div>
+      <button
+        onClick={() => setOn(!on)}
+        className={cn(
+          'h-5 w-9 rounded-full border transition-colors flex items-center',
+          on ? 'border-emerald-400/30 bg-emerald-500/80' : 'border-white/15 bg-white/10'
+        )}
+        aria-label={`Toggle ${pref.label}`}
+      >
+        <span className={cn(
+          'block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform',
+          on ? 'translate-x-[16px]' : 'translate-x-[2px]'
+        )} />
+      </button>
+    </div>
   );
 }

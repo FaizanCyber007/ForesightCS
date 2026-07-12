@@ -1,4 +1,4 @@
-import { Bell, Bot, Crown, TrendingUp, Sparkles, ShieldAlert, ArrowRight } from 'lucide-react';
+import { ShieldAlert, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { DashboardMetrics } from '@/components/features/dashboard-metrics';
@@ -6,7 +6,7 @@ import { AIInsights } from '@/components/features/ai-insights';
 import { CustomerTable } from '@/components/features/customer-table';
 import { AreaRevenueChart, DonutHealthChart } from '@/components/features/metric-charts';
 import { SignalFeed } from '@/components/features/signal-feed';
-import { GlassCard } from '@/components/ui/glass-card';
+
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { getDashboardSummary, getTopRiskAccounts } from '@/services/api';
 

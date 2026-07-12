@@ -63,6 +63,7 @@ export type CustomerDetail = CustomerRecord & {
   };
   timeline: TimelineEvent[];
   notes: string[];
+  contacts: { name: string; role: string; email: string; avatar: string }[];
 };
 
 import mockData from '@/data/mock-data.json';
@@ -75,6 +76,8 @@ const { healthPalette, customers, timelineEvents } = mockData as {
 
 // Global in-memory mutable state simulating database
 let activeCustomers: CustomerRecord[] = [...customers];
+
+const activeNotes: Record<string, string[]> = {};
 
 function cloneCustomers() {
   return activeCustomers.map((customer) => ({ ...customer }));
@@ -259,11 +262,16 @@ function buildCustomerDetail(customer: CustomerRecord): CustomerDetail {
       apiUsage: Math.min(100, customer.expansionPotential + 8),
     },
     timeline,
-    notes: [
+    notes: activeNotes[customer.id] || [
       `${customer.company} is tracked by ${customer.owner} on the CS team.`,
       `Health score is ${customer.health.toLowerCase()} with ${customer.churnProbability}% predicted churn risk.`,
       `Renewal window closes on ${customer.renewalDate}.`,
     ],
+    contacts: [
+      { name: 'Sarah Jenkins', role: 'Executive Sponsor', email: `s.jenkins@${customer.company.toLowerCase().replace(/\s+/g, '')}.com`, avatar: 'SJ' },
+      { name: 'David Chen', role: 'Admin', email: `d.chen@${customer.company.toLowerCase().replace(/\s+/g, '')}.com`, avatar: 'DC' },
+      { name: 'Emily Ross', role: 'Power User', email: `e.ross@${customer.company.toLowerCase().replace(/\s+/g, '')}.com`, avatar: 'ER' },
+    ]
   };
 }
 
@@ -279,4 +287,51 @@ function delay(ms: number) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
+}
+
+export type Task = {
+  id: string;
+  title: string;
+  description: string;
+  priority: 'Low' | 'Medium' | 'High' | 'Critical';
+  status: 'Open' | 'In Progress' | 'Completed';
+  dueDate: string;
+  relatedAccount?: string;
+  type: 'Manual' | 'Automated Playbook' | 'System Alert';
+};
+
+const mockTasks: Task[] = [
+  { id: 'tsk-001', title: 'Schedule QBR with Meridian SaaS', description: 'Executive sponsor change detected. QBR overdue by 14 days.', priority: 'High', status: 'Open', dueDate: '2026-07-14', relatedAccount: 'Meridian SaaS', type: 'System Alert' },
+  { id: 'tsk-002', title: 'Review renewal contract for BrightCore', description: 'Renewal coming up in 60 days, low engagement detected.', priority: 'Critical', status: 'Open', dueDate: '2026-07-15', relatedAccount: 'BrightCore Inc.', type: 'Automated Playbook' },
+  { id: 'tsk-003', title: 'Follow up on feature request', description: 'Summit Ops asked about custom reporting API access.', priority: 'Medium', status: 'In Progress', dueDate: '2026-07-18', relatedAccount: 'Summit Ops', type: 'Manual' },
+  { id: 'tsk-004', title: 'Onboarding check-in for Nexus Point', description: 'Verify setup completion after first 30 days.', priority: 'Low', status: 'Open', dueDate: '2026-07-20', relatedAccount: 'Nexus Point', type: 'System Alert' },
+  { id: 'tsk-005', title: 'Billing delinquency warning', description: 'Apex Solutions missed last 2 invoices.', priority: 'Critical', status: 'Open', dueDate: '2026-07-12', relatedAccount: 'Apex Solutions', type: 'Automated Playbook' },
+];
+
+const activeTasks = [...mockTasks];
+
+export async function getInboxTasks() {
+  await delay(120);
+  return [...activeTasks];
+}
+
+export async function updateTaskStatus(id: string, newStatus: Task['status']) {
+  await delay(100);
+  const idx = activeTasks.findIndex(t => t.id === id);
+  if (idx !== -1) {
+    activeTasks[idx] = { ...activeTasks[idx], status: newStatus };
+  }
+}
+
+export async function addCustomerNote(customerId: string, note: string) {
+  await delay(100);
+  if (!activeNotes[customerId]) {
+    activeNotes[customerId] = [
+      `${activeCustomers.find(c => c.id === customerId)?.company} is tracked by the CS team.`,
+      `Initial record initialized.`,
+    ];
+  }
+  // Add to beginning of array
+  activeNotes[customerId] = [note, ...activeNotes[customerId]];
+  return activeNotes[customerId];
 }

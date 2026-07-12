@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { GlassCard } from '@/components/ui/glass-card';
 import { formatCurrency } from '@/lib/formatters';
 import type { CustomerDetail } from '@/services/api';
+import { CustomerContacts } from '@/components/features/customer-contacts';
+import { AddNoteForm } from '@/components/features/add-note-form';
 
 /** Radial health gauge — SVG ring that fills based on health score. */
 function HealthGauge({ score, health }: { score: number; health: string }) {
@@ -129,10 +131,11 @@ export function Customer360({ customer }: { customer: CustomerDetail }) {
         description: `${customer.company} is now marked as ${newHealth}.`,
         tone: newHealth === 'Healthy' ? 'success' : 'error',
       });
-    } catch (e: any) {
+    } catch (e) {
+      const err = e as Error;
       toast({
         title: 'Update Failed',
-        description: e.message || 'An error occurred while updating the health status.',
+        description: err.message || 'An error occurred while updating the health status.',
         tone: 'error',
       });
       console.error(e);
@@ -400,7 +403,10 @@ export function Customer360({ customer }: { customer: CustomerDetail }) {
               </div>
             ))}
           </div>
+          <AddNoteForm customerId={customer.id} />
         </GlassCard>
+        
+        <CustomerContacts contacts={customer.contacts} />
       </div>
     </div>
   );

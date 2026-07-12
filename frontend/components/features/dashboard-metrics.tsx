@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowDownRight, ArrowUpRight, ShieldAlert, BadgeDollarSign, Sparkles, TrendingUp } from 'lucide-react';
+import { ShieldAlert, BadgeDollarSign, Sparkles, TrendingUp } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 
 import { formatCompactNumber, formatPercent } from '@/lib/formatters';

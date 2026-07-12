@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus, Trash2, HelpCircle } from 'lucide-react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -68,9 +68,9 @@ export function RuleBuilderForm() {
   });
   const fields = useFieldArray({ control: form.control, name: 'conditions' });
 
-  const totalWeight = fields.fields.reduce(
-    (sum, _, index) =>
-      sum + Number(form.watch(`conditions.${index}.weight`) ?? 0),
+  const watchedConditions = useWatch({ control: form.control, name: 'conditions' });
+  const totalWeight = (watchedConditions || []).reduce(
+    (sum, condition) => sum + Number(condition.weight || 0),
     0
   );
 

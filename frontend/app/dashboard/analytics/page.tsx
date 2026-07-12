@@ -2,7 +2,7 @@ import { getHealthSnapshot, getDashboardSummary } from '@/services/api';
 import { GlassCard } from '@/components/ui/glass-card';
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { MetricCharts } from '@/components/features/metric-charts';
-import { BarChart3, TrendingUp, Users, Activity, Sparkles, TrendingDown } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, Activity, TrendingDown } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 

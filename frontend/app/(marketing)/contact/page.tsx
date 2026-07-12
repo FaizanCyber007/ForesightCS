@@ -4,6 +4,9 @@ import { Mail, MapPin, MessageSquare, Phone } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { submitContactFormAction } from '@/app/actions';
 
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { Button } from '@/components/ui/button';
@@ -39,29 +42,56 @@ const contactInfo = [
   },
 ];
 
+const contactSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().email('Please enter a valid email address'),
+  message: z.string().min(10, 'Message must be at least 10 characters long'),
+});
+
+type ContactFormData = z.infer<typeof contactSchema>;
+
 export default function ContactPage() {
   const { toast } = useToast();
-  const form = useForm<{
-    firstName: string;
-    lastName: string;
-    email: string;
-    message: string;
-  }>();
+  const form = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      message: '',
+    }
+  });
   const [submitting, setSubmitting] = useState(false);
   const reduceMotion = useReducedMotion();
 
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
+  async function onSubmit(data: ContactFormData) {
     setSubmitting(true);
-    // Simulate network delay
-    await new Promise((r) => setTimeout(r, 800));
-    setSubmitting(false);
-    toast({
-      title: 'Message sent',
-      description: 'Our team will reply within one business day.',
-      tone: 'success',
-    });
-    form.reset();
+    try {
+      const result = await submitContactFormAction(data);
+      if (result.error) {
+        toast({
+          title: 'Error',
+          description: result.error,
+          tone: 'error',
+        });
+      } else {
+        toast({
+          title: 'Message sent',
+          description: 'Our team will reply within one business day.',
+          tone: 'success',
+        });
+        form.reset();
+      }
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to send message. Please try again.',
+        tone: 'error',
+      });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -134,15 +164,29 @@ export default function ContactPage() {
                   Fill in your details and we&#39;ll get back to you within 24 hours.
                 </p>
               </div>
-              <form className="space-y-4" onSubmit={handleSubmit}>
+              <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="space-y-2">
                     <span className="text-sm text-zinc-300">First name</span>
-                    <Input placeholder="Jane" {...form.register('firstName', { required: true })} />
+                    <Input 
+                      placeholder="Jane" 
+                      {...form.register('firstName')} 
+                      className={form.formState.errors.firstName ? 'border-rose-500/50 focus-visible:ring-rose-500/20' : ''}
+                    />
+                    {form.formState.errors.firstName && (
+                      <p className="text-xs text-rose-400">{form.formState.errors.firstName.message}</p>
+                    )}
                   </label>
                   <label className="space-y-2">
                     <span className="text-sm text-zinc-300">Last name</span>
-                    <Input placeholder="Doe" {...form.register('lastName', { required: true })} />
+                    <Input 
+                      placeholder="Doe" 
+                      {...form.register('lastName')} 
+                      className={form.formState.errors.lastName ? 'border-rose-500/50 focus-visible:ring-rose-500/20' : ''}
+                    />
+                    {form.formState.errors.lastName && (
+                      <p className="text-xs text-rose-400">{form.formState.errors.lastName.message}</p>
+                    )}
                   </label>
                 </div>
                 <label className="block space-y-2">
@@ -150,16 +194,23 @@ export default function ContactPage() {
                   <Input
                     type="email"
                     placeholder="jane@company.com"
-                    {...form.register('email', { required: true })}
+                    {...form.register('email')}
+                    className={form.formState.errors.email ? 'border-rose-500/50 focus-visible:ring-rose-500/20' : ''}
                   />
+                  {form.formState.errors.email && (
+                    <p className="text-xs text-rose-400">{form.formState.errors.email.message}</p>
+                  )}
                 </label>
                 <label className="block space-y-2">
                   <span className="text-sm text-zinc-300">Message</span>
                   <Textarea
                     placeholder="How can we help you?"
-                    className="min-h-[120px]"
-                    {...form.register('message', { required: true })}
+                    className={`min-h-[120px] ${form.formState.errors.message ? 'border-rose-500/50 focus-visible:ring-rose-500/20' : ''}`}
+                    {...form.register('message')}
                   />
+                  {form.formState.errors.message && (
+                    <p className="text-xs text-rose-400">{form.formState.errors.message.message}</p>
+                  )}
                 </label>
                 <Button className="w-full" size="lg" type="submit" disabled={submitting}>
                   {submitting ? 'Sending…' : 'Send Message'}
