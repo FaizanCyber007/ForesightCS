@@ -74,7 +74,9 @@ export function CommandPalette({ items, open: controlledOpen, onClose }: Command
   // Reset query & index when palette opens
   React.useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery('');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveIndex(0);
     }
   }, [open]);

@@ -5,11 +5,8 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   Activity,
   AlertTriangle,
-  ArrowUpRight,
   Bell,
   BarChart3,
-  CheckCircle2,
-  ChevronRight,
   TrendingUp,
   TrendingDown,
   Users,
@@ -66,31 +63,7 @@ const healthConfig = {
   healthy: { bar: 'bg-emerald-400', dot: 'bg-emerald-400', text: 'text-emerald-400', badge: 'text-emerald-300 border-emerald-500/30 bg-emerald-500/15', label: 'Healthy' },
 };
 
-function MiniSparkline({ up }: { up: boolean }) {
-  const points = up
-    ? [20, 28, 22, 35, 30, 42, 38, 52]
-    : [52, 45, 50, 38, 42, 30, 35, 22];
-  const max = Math.max(...points);
-  const min = Math.min(...points);
-  const h = 24;
-  const w = 56;
-  const xs = points.map((_, i) => (i / (points.length - 1)) * w);
-  const ys = points.map((v) => h - ((v - min) / (max - min || 1)) * h);
-  const d = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x},${ys[i]}`).join(' ');
-  const fill = `${d} L${w},${h} L0,${h} Z`;
-  return (
-    <svg width={w} height={h} className="overflow-visible">
-      <defs>
-        <linearGradient id={`sg-${up}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={up ? '#34d399' : '#f87171'} stopOpacity="0.3" />
-          <stop offset="100%" stopColor={up ? '#34d399' : '#f87171'} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={fill} fill={`url(#sg-${up})`} />
-      <path d={d} stroke={up ? '#34d399' : '#f87171'} strokeWidth="1.5" fill="none" />
-    </svg>
-  );
-}
+
 
 function LiveAccountCard({ account, active }: { account: typeof accountScenarios[0]; active: boolean }) {
   const cfg = healthConfig[account.health];
@@ -173,7 +146,7 @@ export function DashboardMockup() {
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [reduceMotion]);
 
-  const activeAccount = accountScenarios[activeAccountIdx];
+
 
   return (
     <div className="relative w-full overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d10] shadow-[0_40px_120px_rgba(0,0,0,0.8)]">

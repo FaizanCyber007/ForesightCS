@@ -51,7 +51,7 @@ export function LoginForm() {
         });
         router.push('/dashboard');
       }
-    } catch (err) {
+    } catch {
       toast({
         title: 'Authentication Failed',
         description: 'Check credentials and try again.',
@@ -160,7 +160,7 @@ export function RegisterForm() {
         });
         router.push('/dashboard');
       }
-    } catch (err) {
+    } catch {
       toast({
         title: 'Registration Failed',
         description: 'An error occurred during workspace creation.',

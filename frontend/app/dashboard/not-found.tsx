@@ -15,7 +15,7 @@ export default function DashboardNotFound() {
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-white mb-3">Item not found</h1>
           <p className="text-zinc-400">
-            We couldn't find the customer, playbook, or resource you were looking for. It may have been deleted or you might not have permission to view it.
+            We couldn&apos;t find the customer, playbook, or resource you were looking for. It may have been deleted or you might not have permission to view it.
           </p>
         </div>
 

@@ -4,12 +4,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity,
-  AlertTriangle,
   BarChart3,
-  CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Play,
   ShieldAlert,
   Zap,
 } from 'lucide-react';
