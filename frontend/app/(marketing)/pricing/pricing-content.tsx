@@ -158,10 +158,10 @@ export function PricingContent() {
         </div>
       </PageWrapper>
     </section>
-      <section className="border-t border-white/5 bg-[#060608]">
-        <PageWrapper className="py-28">
+      <section className="relative border-t border-white/5">
+        <PageWrapper className="relative py-28">
           <motion.div
-            className="relative mx-auto max-w-4xl overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-emerald-500/10 via-[#0a0a0f] to-violet-600/10 p-12 text-center"
+            className="relative mx-auto max-w-4xl overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] backdrop-blur-xl p-12 text-center shadow-2xl"
             initial={{ opacity: 0, y: 32 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

@@ -1,6 +1,7 @@
 import { Footer } from '@/components/layout/footer';
 import { Navbar } from '@/components/layout/navbar';
 import { GridPattern } from '@/components/ui/grid-pattern';
+import { Floating3DBackground } from '@/components/features/floating-3d-background';
 
 export default function MarketingLayout({
   children,
@@ -19,6 +20,8 @@ export default function MarketingLayout({
         <div className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full bg-violet-500/5 blur-[120px]" />
         <div className="absolute bottom-[10%] left-[5%] w-[500px] h-[500px] rounded-full bg-emerald-500/3 blur-[140px]" />
       </div>
+
+      <Floating3DBackground />
 
       <Navbar />
       <main className="relative z-10 flex-1 flex flex-col">{children}</main>
