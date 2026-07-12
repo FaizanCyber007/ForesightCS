@@ -164,7 +164,7 @@ export function LandingSections() {
           SECTION 1 — Pain points / Before state
           Full-width dark band, split layout
       ══════════════════════════════════════════════════════════ */}
-      <section className="relative border-t border-white/5 bg-[#060608] py-24 overflow-hidden">
+      <section className="relative border-t border-white/5 bg-black/40 backdrop-blur-[2px] py-24 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_right,rgba(239,68,68,0.05),transparent_60%)]" />
         <PageWrapper>
           <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
@@ -461,7 +461,7 @@ export function LandingSections() {
       {/* ═══════════════════════════════════════════════════════════
           SECTION 3 — Features (bento grid, not identical cards)
       ══════════════════════════════════════════════════════════ */}
-      <section className="border-t border-white/5 bg-[#060608] py-28">
+      <section className="relative border-t border-white/5 bg-black/40 backdrop-blur-[2px] py-28 overflow-hidden">
         <PageWrapper className="space-y-16">
           <motion.div className="space-y-4" {...scrollAnim}>
             <SectionLabel>Platform capabilities</SectionLabel>
@@ -556,7 +556,7 @@ export function LandingSections() {
 {/* ═══════════════════════════════════════════════════════════
           SECTION 5 — Integrations (logo grid, visual heavy)
       ══════════════════════════════════════════════════════════ */}
-      <section className="border-t border-white/5 bg-[#060608] py-24">
+      <section className="relative border-t border-white/5 bg-black/40 backdrop-blur-[2px] py-24 overflow-hidden">
         <PageWrapper className="space-y-12">
           <motion.div className="text-center space-y-4" {...scrollAnim}>
             <SectionLabel color="amber">Integrations</SectionLabel>
