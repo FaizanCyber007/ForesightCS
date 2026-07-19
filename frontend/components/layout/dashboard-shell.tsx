@@ -10,7 +10,13 @@ import { DashboardHeader } from '@/components/layout/dashboard-header';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/button';
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+export function DashboardShell({
+  children,
+  sidebar = <Sidebar />,
+}: {
+  children: React.ReactNode;
+  sidebar?: React.ReactNode;
+}) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
@@ -60,7 +66,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       {/* Desktop sidebar — sticky full height */}
       <div className="hidden lg:block">
         <div className="sticky top-0 h-screen overflow-y-auto border-r border-white/10">
-          <Sidebar />
+          {sidebar}
         </div>
       </div>
 
@@ -86,7 +92,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               className="fixed inset-y-0 left-0 z-50 w-80 lg:hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <Sidebar />
+              {sidebar}
             </motion.div>
           </>
         )}

@@ -1,5 +1,5 @@
 import { DashboardShell } from '@/components/layout/dashboard-shell';
-import { Dashboard3DBackground } from '@/components/features/dashboard-3d-background';
+import { Dashboard3DBackgroundLazy } from '@/components/features/dashboard-3d-background-lazy';
 
 export default function DashboardLayout({
   children,
@@ -8,7 +8,7 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <Dashboard3DBackground />
+      <Dashboard3DBackgroundLazy />
       <DashboardShell>{children}</DashboardShell>
     </>
   );

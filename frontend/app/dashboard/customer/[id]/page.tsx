@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -7,10 +8,17 @@ import { getCustomerById } from '@/services/api';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+type CustomerPageProps = {
+  params: Promise<{ id: string }>;
+};
+
+/** Dedupes the fetch so `generateMetadata` and the page component share one request per render. */
+const loadCustomer = cache((id: string) => getCustomerById(id));
+
+export async function generateMetadata({ params }: CustomerPageProps): Promise<Metadata> {
   const { id } = await params;
-  const customer = await getCustomerById(id);
-  
+  const customer = await loadCustomer(id);
+
   if (!customer) {
     return {
       title: 'Customer Not Found',
@@ -23,16 +31,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function CustomerPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function CustomerPage({ params }: CustomerPageProps) {
   const { id } = await params;
-  const customer = await getCustomerById(id);
+  const customer = await loadCustomer(id);
 
   if (!customer) {
-    notFound();
+    return notFound();
   }
 
   return (

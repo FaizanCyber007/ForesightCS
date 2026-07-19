@@ -1,0 +1,19 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = ["migrations", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "DJ"]
+# DJ001: nullable CharField/TextField (needed for optional help_text-style fields).
+# DJ012: false-positives on secondary managers (e.g. `all_objects`) declared after
+# the default `objects` manager -- declaration order there is intentional, since
+# Django uses the first-declared manager as the implicit default.
+ignore = ["DJ001", "DJ012"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["core", "foresight_backend"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "foresight_backend.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]

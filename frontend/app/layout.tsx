@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { ToastProvider } from '@/components/ui/toast';
 import { AuthProvider } from '@/context/auth-context';
+import { SuppressWarnings } from '@/components/suppress-warnings';
 
 const inter = Inter({
   variable: '--font-inter',
@@ -41,6 +42,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-[#0a0a0a] text-white" suppressHydrationWarning>
+        <SuppressWarnings />
         <AuthProvider>
           <ToastProvider>
             {children}
