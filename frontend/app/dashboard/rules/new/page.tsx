@@ -1,9 +1,12 @@
 import { PageWrapper } from '@/components/layout/page-wrapper';
 import { RuleBuilderForm } from '@/components/features/rule-builder-form';
+import { getMetricTypes } from '@/services/rules';
 
 export const dynamic = 'force-dynamic';
 
-export default function NewRulePage() {
+export default async function NewRulePage() {
+  const metricOptions = await getMetricTypes();
+
   return (
     <PageWrapper className="space-y-6 py-8 lg:py-10">
       <div className="space-y-3">
@@ -18,7 +21,7 @@ export default function NewRulePage() {
           without sacrificing validation quality.
         </p>
       </div>
-      <RuleBuilderForm />
+      <RuleBuilderForm metricOptions={metricOptions} />
     </PageWrapper>
   );
 }

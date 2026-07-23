@@ -36,13 +36,13 @@ export function LoginForm() {
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { identifier: '', password: '' },
   });
 
   async function onSubmit(values: LoginFormValues) {
     setSubmitting(true);
     try {
-      const success = await login(values.email);
+      const success = await login(values.identifier, values.password);
       if (success) {
         toast({
           title: 'Authorized',
@@ -87,15 +87,15 @@ export function LoginForm() {
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <Field
-            label="Work email"
-            icon={<Mail className="h-4 w-4" />}
-            error={form.formState.errors.email?.message}
+            label="Email or username"
+            icon={<UserRound className="h-4 w-4" />}
+            error={form.formState.errors.identifier?.message}
           >
             <Input
-              type="email"
-              placeholder="you@company.com"
+              type="text"
+              placeholder="you@company.com or username"
               disabled={submitting}
-              {...form.register('email')}
+              {...form.register('identifier')}
             />
           </Field>
           <Field
@@ -139,6 +139,7 @@ export function RegisterForm() {
       companyName: '',
       role: 'Customer Success Manager',
       email: '',
+      username: '',
       password: '',
     },
   });
@@ -150,7 +151,9 @@ export function RegisterForm() {
         values.fullName,
         values.companyName,
         values.role,
-        values.email
+        values.email,
+        values.username,
+        values.password
       );
       if (success) {
         toast({
@@ -223,6 +226,17 @@ export function RegisterForm() {
               placeholder="you@company.com"
               disabled={submitting}
               {...form.register('email')}
+            />
+          </Field>
+          <Field
+            label="Username"
+            icon={<UserRound className="h-4 w-4" />}
+            error={form.formState.errors.username?.message}
+          >
+            <Input
+              placeholder="ari.johnson"
+              disabled={submitting}
+              {...form.register('username')}
             />
           </Field>
           <Field

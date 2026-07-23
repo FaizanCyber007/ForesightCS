@@ -1,6 +1,7 @@
 export * from './badge';
 export * from './button';
 export * from './command-palette';
+export * from './error-state';
 export * from './glass-card';
 export * from './input';
 export * from './modal';

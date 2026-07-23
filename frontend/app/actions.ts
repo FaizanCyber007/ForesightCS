@@ -2,40 +2,31 @@
 
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { updateCustomerHealth, resetDatabase, updateTaskStatus, addCustomerNote, type HealthStatus } from '@/services/api';
-
-const updateHealthSchema = z.object({
-  id: z.string().min(1, "Customer ID is required"),
-  health: z.enum(['Healthy', 'At-Risk', 'Critical'], {
-    message: "Invalid health status",
-  }),
-  churnProbability: z.number().min(0).max(100, "Churn probability must be between 0 and 100"),
-});
+import {
+  updateTaskStatus,
+  addCustomerNote,
+  recalculateCustomerHealth,
+  createCustomer,
+  type CustomerRecord,
+} from '@/services/api';
+import { createHealthRule, deleteHealthRule, type HealthRule } from '@/services/rules';
+import { suspendOrganization, type OrganizationRecord } from '@/services/admin';
+import { ApiError, type ApiFieldErrors } from '@/lib/apiClient';
+import { healthRuleSchema, customerSchema } from '@/lib/schemas';
 
 /**
- * Server Action to update a customer's health status and revalidate paths
+ * Server Action that triggers the backend HealthScoreEngine for one
+ * customer (services.py) and revalidates paths so the new score is reflected.
  */
-export async function updateCustomerHealthAction(id: string, health: HealthStatus, churnProbability: number) {
-  // Validate input using Zod
-  const parsed = updateHealthSchema.safeParse({ id, health, churnProbability });
-  
-  if (!parsed.success) {
-    throw new Error(parsed.error.issues[0].message);
+export async function recalculateHealthScoreAction(id: string) {
+  const updated = await recalculateCustomerHealth(id);
+  if (!updated) {
+    throw new Error('Customer not found.');
   }
-
-  const updated = await updateCustomerHealth(parsed.data.id, parsed.data.health, parsed.data.churnProbability);
-  // Revalidate the dashboard and details pages so they refetch the updated dataset
   revalidatePath('/dashboard');
+  revalidatePath('/dashboard/accounts');
   revalidatePath(`/dashboard/customer/${id}`);
   return updated;
-}
-
-/**
- * Server Action to reset the database to baseline and refresh dashboard
- */
-export async function resetDatabaseAction() {
-  await resetDatabase();
-  revalidatePath('/dashboard');
 }
 
 /**
@@ -70,4 +61,91 @@ export async function submitContactFormAction(data: z.infer<typeof contactSchema
   
   // In a real app, send an email or store in DB here
   return { success: true };
+}
+
+export type FormActionResult<T> =
+  | { success: true; data: T }
+  | { success: false; fieldErrors: ApiFieldErrors };
+
+/**
+ * Server Action backing the Rule Builder form. Re-validates with the same
+ * Zod schema the client uses (front-to-back symmetry, CLAUDE.md ##3), then
+ * forwards to DRF with a fresh Idempotency-Key. Both Zod issues and DRF 400
+ * payloads are normalized into the same `fieldErrors` shape so the client
+ * can render either under the relevant input with one code path.
+ */
+export async function createHealthRuleAction(
+  values: unknown
+): Promise<FormActionResult<HealthRule>> {
+  const parsed = healthRuleSchema.safeParse(values);
+  if (!parsed.success) {
+    const fieldErrors: ApiFieldErrors = {};
+    for (const issue of parsed.error.issues) {
+      const key = String(issue.path[0] ?? 'non_field_errors');
+      fieldErrors[key] = [...(fieldErrors[key] ?? []), issue.message];
+    }
+    return { success: false, fieldErrors };
+  }
+
+  try {
+    const rule = await createHealthRule(parsed.data, crypto.randomUUID());
+    revalidatePath('/dashboard/rules');
+    return { success: true, data: rule };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return { success: false, fieldErrors: error.fieldErrors };
+    }
+    throw error;
+  }
+}
+
+export async function deleteHealthRuleAction(id: string) {
+  await deleteHealthRule(id);
+  revalidatePath('/dashboard/rules');
+}
+
+/**
+ * Server Action backing the "Add Customer" modal (dashboard/accounts).
+ * Re-validates with the same Zod schema the client uses (front-to-back
+ * symmetry, CLAUDE.md ##3), then forwards to DRF with a fresh
+ * Idempotency-Key. Both Zod issues and DRF 400 payloads are normalized
+ * into the same `fieldErrors` shape so the client can render either under
+ * the relevant input with one code path.
+ */
+export async function createCustomerAction(
+  values: unknown
+): Promise<FormActionResult<CustomerRecord>> {
+  const parsed = customerSchema.safeParse(values);
+  if (!parsed.success) {
+    const fieldErrors: ApiFieldErrors = {};
+    for (const issue of parsed.error.issues) {
+      const key = String(issue.path[0] ?? 'non_field_errors');
+      fieldErrors[key] = [...(fieldErrors[key] ?? []), issue.message];
+    }
+    return { success: false, fieldErrors };
+  }
+
+  try {
+    const customer = await createCustomer(parsed.data, crypto.randomUUID());
+    revalidatePath('/dashboard');
+    revalidatePath('/dashboard/accounts');
+    revalidatePath('/dashboard/analytics');
+    return { success: true, data: customer };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      return { success: false, fieldErrors: error.fieldErrors };
+    }
+    throw error;
+  }
+}
+
+/**
+ * Manual super-admin override -- mirrors what the Lemon Squeezy
+ * `subscription_payment_failed` webhook does automatically
+ * (backend/billing/services.py::suspend_organization).
+ */
+export async function suspendOrganizationAction(id: string): Promise<OrganizationRecord> {
+  const updated = await suspendOrganization(id);
+  revalidatePath('/admin');
+  return updated;
 }

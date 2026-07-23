@@ -50,8 +50,8 @@ const primaryNav = [
     exact: false,
   },
   {
-    href: '/dashboard/rules/new',
-    label: 'Rule Builder',
+    href: '/dashboard/rules',
+    label: 'Health Rules',
     icon: Zap,
     exact: false,
   },

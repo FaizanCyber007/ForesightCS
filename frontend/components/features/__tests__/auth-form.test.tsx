@@ -11,7 +11,7 @@ describe('LoginForm component', () => {
       </AuthProvider>
     );
     expect(screen.getByRole('heading', { name: /sign in to your command center/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/work email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/email or username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
@@ -21,11 +21,11 @@ describe('LoginForm component', () => {
         <LoginForm />
       </AuthProvider>
     );
-    
+
     fireEvent.click(screen.getByRole('button', { name: /enter the command center/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/enter a valid work email/i)).toBeInTheDocument();
+      expect(screen.getByText(/enter your email or username/i)).toBeInTheDocument();
       expect(screen.getByText(/password must be at least 8 characters/i)).toBeInTheDocument();
     });
   });

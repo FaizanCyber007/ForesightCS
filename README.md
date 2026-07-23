@@ -1,60 +1,188 @@
 # ForesightCS
 
-ForesightCS is a premium B2B SaaS platform designed to predict customer churn and manage account health for SMBs (Small and Medium-sized Businesses). It provides a comprehensive Customer Success (CS) command center with actionable insights, detailed metrics, and a rule builder for predictive churn analysis.
+ForesightCS is a multi-tenant B2B SaaS platform that predicts customer churn and manages account
+health for SMB software companies, using a heuristic (rule-based) scoring engine. It provides a
+Customer Success command center with actionable insights, detailed telemetry, and a rule builder
+for predictive churn analysis.
+
+- **Backend** (`/backend`): Django 5, Django REST Framework, PostgreSQL.
+- **Frontend** (`/frontend`): Next.js 14 (App Router), TypeScript, Tailwind CSS.
 
 ## Features
 
-- **Pre-Login Landing Page**: A high-converting hero section with interactive 3D elements, smooth scroll-reveal effects, and dynamic pricing tiers.
-- **Authentication**: Beautiful glassmorphic forms for login and registration with validation.
-- **Dashboard / Command Center**: A comprehensive overview of customer health, high-level metric cards, interactive charts, and an animated data table showing healthy, at-risk, and critical customers.
-- **Customer 360 View**: Detailed customer telemetry data, timeline of events, and billing status for individual accounts.
-- **Rule Builder**: An advanced interface to configure predictive churn rules based on various weights and metrics.
-- **Dynamic Data Integration**: Data throughout the application is fetched dynamically, simulating a real-world backend API integration.
+- **Dashboard / Command Center**: customer health overview, metric cards, interactive charts, and
+  a data table of healthy/at-risk/critical customers — all backed by real Postgres data.
+- **Customer 360 View**: telemetry timeline, notes, billing status, and a "Recalculate Health
+  Score" action that re-runs the rule engine (the only way a customer's score can change).
+- **Rule Builder**: configure the weighted rules the churn-scoring engine evaluates against
+  customer telemetry.
+- **Inbox / Tasks** and **Playbooks**: CS workflow tracking, fully persisted through the API.
+- **Super-admin**: cross-tenant organization management (suspend/reactivate, global metrics).
 
 ## Tech Stack
 
-- **Framework**: Next.js (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS, CSS Modules
-- **Animations**: Framer Motion
-- **3D Graphics**: `@react-three/fiber`, `@react-three/drei`
-- **Forms & Validation**: React Hook Form, Zod
-- **Icons**: Lucide-React
+| Layer | Stack |
+|---|---|
+| Backend | Django 5, DRF, PostgreSQL, `psycopg3`, `django-environ`, `drf-spectacular`, `django-filter` |
+| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS, Framer Motion, `@react-three/fiber`, React Hook Form, Zod |
+| Testing/Lint | `pytest` + `factory_boy` (backend), `vitest` + React Testing Library (frontend), `ruff`, `eslint` |
 
-## Design System
+---
 
-The platform features a highly premium, custom design inspired by top-tier SaaS companies.
-- **Theme**: Deep Dark Mode with subtle glowing accents.
-- **UI Elements**: Extensive use of Glassmorphism (backdrop-blur, translucent borders) for cards, sidebars, and dropdowns.
-- **Micro-interactions**: Smooth page routing, staggering list items, and hover effects powered by Framer Motion.
+## Complete setup guide (do this before running anything)
 
-## Getting Started
+### 1. Prerequisites — install once
 
-1. **Install Dependencies**:
-   ```bash
-   cd frontend
-   npm install
-   ```
+| Tool | Version | Why |
+|---|---|---|
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | latest | Runs the local PostgreSQL container. Must be **open and running** before you start the backend. |
+| Python | 3.12+ | Backend runtime |
+| Node.js | 20 LTS+ | Frontend runtime |
+| Git | any recent | Version control |
 
-2. **Run the Development Server**:
-   ```bash
-   npm run dev
-   ```
+You don't need to install PostgreSQL yourself — `backend/docker-compose.yml` provisions it in a
+container. If you'd rather point at an existing local Postgres install, see
+[Troubleshooting](#troubleshooting).
 
-3. **Open the Application**:
-   Navigate to [http://localhost:3000](http://localhost:3000) in your browser to see the result.
+### 2. Backend setup
+
+```bash
+cd backend
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+**Create your `.env`:**
+
+```bash
+copy .env.example .env      # Windows
+cp .env.example .env        # macOS/Linux
+```
+
+(`start.py`, below, will also create this for you automatically if you skip this step.)
+
+**Fill in the required keys** in `backend/.env`. Everything else already has a working local-dev
+default — you don't need to touch `DB_*` unless you changed the Docker Compose ports.
+
+| Key | Required? | What to do |
+|---|---|---|
+| `DJANGO_SECRET_KEY` | **Yes** | Generate one and paste it in: `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"` |
+| `LEMON_SQUEEZY_WEBHOOK_SECRET` | Only if testing billing webhooks | Get this from your Lemon Squeezy dashboard → **Settings → Webhooks** → your endpoint's signing secret. Without it, `POST /api/v1/billing/webhooks/lemon-squeezy/` rejects every request with `401`. Everything else works fine with this left blank. |
+| `DJANGO_SUPERADMIN_USERNAME` / `DJANGO_SUPERADMIN_PASSWORD` | Recommended | Dev-only super-admin account, auto-created by the seed command. **Must match** `ADMIN_API_USERNAME` / `ADMIN_API_PASSWORD` in `frontend/.env.local` (step 3), or the frontend's admin pages can't authenticate. |
+| `CORS_ALLOWED_ORIGINS` | No | Defaults to `http://localhost:3000` (the frontend dev server). Only change if you run the frontend on a different port. |
+
+**Start everything with one command:**
+
+```bash
+python start.py
+```
+
+This single entrypoint:
+1. Starts the Postgres container via Docker Compose (Docker Desktop must already be open).
+2. Waits for the database to accept connections.
+3. Applies all migrations.
+4. Seeds demo data (organization, customers, health rules, tasks, playbooks, notes) — idempotent,
+   safe to re-run any time.
+5. Runs the Django dev server at `http://localhost:8000`.
+
+Leave this running in its own terminal; `Ctrl+C` stops it.
+
+### 3. Frontend setup
+
+In a **second terminal**:
+
+```bash
+cd frontend
+npm install
+```
+
+**Create your `.env.local`:**
+
+```bash
+copy .env.example .env.local      # Windows
+cp .env.example .env.local        # macOS/Linux
+```
+
+| Key | Required? | What to do |
+|---|---|---|
+| `NEXT_PUBLIC_API_URL` | No | Defaults to `http://localhost:8000`, matching the backend above. |
+| `ADMIN_API_USERNAME` / `ADMIN_API_PASSWORD` | **Yes**, for the admin dashboard | Must exactly match `DJANGO_SUPERADMIN_USERNAME` / `DJANGO_SUPERADMIN_PASSWORD` from `backend/.env`. |
+
+**Run it:**
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:3000`. Login is a client-side mock in this phase (no real auth yet) — any
+name/email gets you into the dashboard.
+
+### 4. Verify everything works
+
+- `http://localhost:3000/dashboard` loads with real customers, tasks, and playbooks (not empty).
+- `http://localhost:8000/api/v1/customers/` returns JSON.
+- The OpenAPI schema (drf-spectacular) is reachable per `backend/foresight_backend/urls.py`.
+
+### 5. Running tests & linting
+
+```bash
+# Backend
+cd backend
+pytest
+ruff format . && ruff check --fix .
+
+# Frontend
+cd frontend
+npm run lint
+npm run test
+npm run build
+```
+
+## Troubleshooting
+
+- **`start.py` hangs on "Waiting for Postgres to accept connections..."** — Docker Desktop isn't
+  running yet. Open it, wait until it says "Running", then re-run `python start.py`.
+- **No Docker at all** — `start.py` detects this and falls back to assuming Postgres is already
+  reachable locally. Install Postgres yourself, create a database/user matching `backend/.env`'s
+  `DB_NAME`/`DB_USER`/`DB_PASSWORD`, and it connects the same way.
+- **Frontend admin pages return 401** — `ADMIN_API_USERNAME`/`ADMIN_API_PASSWORD` (frontend) and
+  `DJANGO_SUPERADMIN_USERNAME`/`DJANGO_SUPERADMIN_PASSWORD` (backend) don't match, or the backend
+  values were blank when `seed_demo_data` ran (it skips creating the account in that case — fill
+  them in and re-run `python start.py`).
+- **Billing webhook returns 401** — `LEMON_SQUEEZY_WEBHOOK_SECRET` isn't set. Not required unless
+  you're specifically testing that flow.
+- **Port already in use (3000 or 8000)** — stop whatever else is bound to it, or override with
+  `RUNSERVER_HOST=0.0.0.0:8001 python start.py` (backend) / `npm run dev -- -p 3001` (frontend),
+  updating `NEXT_PUBLIC_API_URL` to match if you change the backend port.
 
 ## Project Structure
 
-- `/frontend/app`: Next.js App Router pages and layouts.
-- `/frontend/components`: Modular UI components.
-  - `/ui`: Reusable base components (Buttons, Inputs, Cards).
-  - `/layout`: Structural components (Sidebar, Navbar, Footer).
-  - `/features`: Complex feature-specific components.
-- `/frontend/lib`: Utility functions and schemas.
-- `/frontend/services`: Mock API fetch functions for data simulation.
-- `/frontend/public`: Static assets.
+```
+backend/
+  core/         Organization/CustomUser models, tenancy resolution, soft-delete BaseModel
+  customers/    Customer, EventLog, HealthScoreEngine (churn scoring)
+  rules/        HealthRule (weights/thresholds the scoring engine evaluates)
+  tasks/        Inbox tasks
+  playbooks/    CS playbooks
+  notes/        Account notes (Customer 360)
+  billing/      Lemon Squeezy webhook integration
+  superadmin/   Cross-tenant admin endpoints
+  start.py      Single entrypoint: db + migrate + seed + runserver
+
+frontend/
+  app/          Next.js App Router pages and layouts
+  components/   ui/ (base), layout/ (structural), features/ (feature-specific)
+  lib/          Utilities and Zod schemas (mirror backend serializers)
+  services/     apiClient-based data-fetching modules, one per domain
+```
 
 ## About the Project
 
-This project was built iteratively using AI assistance, focusing on modern web development practices, high-quality UI/UX design, and complex state management. The development process emphasizes modular architecture, component reusability, and Next.js best practices like the separation of Server and Client components. You can view the history of prompts used to generate this project in `prompts.md`.
+This project was built iteratively using AI assistance, following the architecture and standards
+in `CLAUDE.md`. You can view the history of prompts used to develop it in `prompts.md`.

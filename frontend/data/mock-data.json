@@ -5,10 +5,22 @@
     "Critical": "#fb7185"
   },
   "publicStats": [
-    { "value": "27%", "label": "Average churn reduction" },
-    { "value": "4.3x", "label": "Faster risk intervention" },
-    { "value": "98%", "label": "Signal data coverage" },
-    { "value": "$2.1B", "label": "ARR protected to date" }
+    {
+      "value": "27%",
+      "label": "Average churn reduction"
+    },
+    {
+      "value": "4.3x",
+      "label": "Faster risk intervention"
+    },
+    {
+      "value": "98%",
+      "label": "Signal data coverage"
+    },
+    {
+      "value": "$2.1B",
+      "label": "ARR protected to date"
+    }
   ],
   "landingTestimonials": [
     {
@@ -62,357 +74,41 @@
     {
       "step": "03",
       "title": "Act with playbooks",
-      "description": "Turn risk signals into prescriptive actions — executive outreach, QBR scheduling, billing follow-ups — and track outcomes."
+      "description": "Turn risk signals into prescriptive actions \u00e2\u20ac\u201d executive outreach, QBR scheduling, billing follow-ups \u00e2\u20ac\u201d and track outcomes."
     }
   ],
   "integrations": [
-    { "name": "Salesforce", "category": "CRM" },
-    { "name": "HubSpot", "category": "CRM" },
-    { "name": "Stripe", "category": "Billing" },
-    { "name": "Chargebee", "category": "Billing" },
-    { "name": "Zendesk", "category": "Support" },
-    { "name": "Intercom", "category": "Support" },
-    { "name": "Segment", "category": "Product" },
-    { "name": "Mixpanel", "category": "Product" }
-  ],
-  "customers": [
     {
-      "id": "acme-cloud",
-      "name": "Maya Chen",
-      "company": "Acme Cloud",
-      "segment": "Mid-Market",
-      "plan": "Scale",
-      "health": "Healthy",
-      "churnProbability": 8,
-      "monthlyRecurringRevenue": 18000,
-      "annualContractValue": 216000,
-      "lastActiveDays": 1,
-      "renewalDate": "2026-11-14",
-      "owner": "Jordan Rivera",
-      "engagementScore": 92,
-      "supportTickets": 1,
-      "netPromoterScore": 68,
-      "expansionPotential": 87
+      "name": "Salesforce",
+      "category": "CRM"
     },
     {
-      "id": "northstar-health",
-      "name": "Elena Foster",
-      "company": "Northstar Health",
-      "segment": "SMB",
-      "plan": "Growth",
-      "health": "At-Risk",
-      "churnProbability": 41,
-      "monthlyRecurringRevenue": 9400,
-      "annualContractValue": 112800,
-      "lastActiveDays": 9,
-      "renewalDate": "2026-09-02",
-      "owner": "Priya Shah",
-      "engagementScore": 54,
-      "supportTickets": 6,
-      "netPromoterScore": 22,
-      "expansionPotential": 32
+      "name": "HubSpot",
+      "category": "CRM"
     },
     {
-      "id": "atlas-retail",
-      "name": "Samir Patel",
-      "company": "Atlas Retail",
-      "segment": "Expansion",
-      "plan": "Enterprise",
-      "health": "Critical",
-      "churnProbability": 78,
-      "monthlyRecurringRevenue": 26400,
-      "annualContractValue": 316800,
-      "lastActiveDays": 21,
-      "renewalDate": "2026-08-21",
-      "owner": "Jordan Rivera",
-      "engagementScore": 29,
-      "supportTickets": 11,
-      "netPromoterScore": -5,
-      "expansionPotential": 11
+      "name": "Stripe",
+      "category": "Billing"
     },
     {
-      "id": "bluepine-studio",
-      "name": "Noah Williams",
-      "company": "Bluepine Studio",
-      "segment": "SMB",
-      "plan": "Starter",
-      "health": "Healthy",
-      "churnProbability": 12,
-      "monthlyRecurringRevenue": 3200,
-      "annualContractValue": 38400,
-      "lastActiveDays": 2,
-      "renewalDate": "2026-12-12",
-      "owner": "Ava Johnson",
-      "engagementScore": 89,
-      "supportTickets": 0,
-      "netPromoterScore": 72,
-      "expansionPotential": 61
+      "name": "Chargebee",
+      "category": "Billing"
     },
     {
-      "id": "orbit-finance",
-      "name": "Liam Turner",
-      "company": "Orbit Finance",
-      "segment": "Mid-Market",
-      "plan": "Scale",
-      "health": "At-Risk",
-      "churnProbability": 49,
-      "monthlyRecurringRevenue": 14200,
-      "annualContractValue": 170400,
-      "lastActiveDays": 12,
-      "renewalDate": "2026-10-01",
-      "owner": "Mina Park",
-      "engagementScore": 47,
-      "supportTickets": 4,
-      "netPromoterScore": 18,
-      "expansionPotential": 40
+      "name": "Zendesk",
+      "category": "Support"
     },
     {
-      "id": "summit-ops",
-      "name": "Hannah Lee",
-      "company": "Summit Ops",
-      "segment": "Expansion",
-      "plan": "Enterprise",
-      "health": "Healthy",
-      "churnProbability": 6,
-      "monthlyRecurringRevenue": 30200,
-      "annualContractValue": 362400,
-      "lastActiveDays": 0,
-      "renewalDate": "2027-01-18",
-      "owner": "Priya Shah",
-      "engagementScore": 96,
-      "supportTickets": 2,
-      "netPromoterScore": 79,
-      "expansionPotential": 94
+      "name": "Intercom",
+      "category": "Support"
+    },
+    {
+      "name": "Segment",
+      "category": "Product"
+    },
+    {
+      "name": "Mixpanel",
+      "category": "Product"
     }
-  ],
-  "monthlyTrends": [
-    { "month": "Jan", "churnRisk": 18, "retainedRevenue": 86, "expansionRevenue": 22 },
-    { "month": "Feb", "churnRisk": 21, "retainedRevenue": 84, "expansionRevenue": 27 },
-    { "month": "Mar", "churnRisk": 19, "retainedRevenue": 88, "expansionRevenue": 29 },
-    { "month": "Apr", "churnRisk": 16, "retainedRevenue": 91, "expansionRevenue": 31 },
-    { "month": "May", "churnRisk": 14, "retainedRevenue": 93, "expansionRevenue": 34 },
-    { "month": "Jun", "churnRisk": 12, "retainedRevenue": 95, "expansionRevenue": 38 }
-  ],
-  "dashboardMetrics": [
-    {
-      "label": "Accounts at risk",
-      "value": 14,
-      "delta": -18,
-      "trend": "down",
-      "description": "3 fewer than last week"
-    },
-    {
-      "label": "Retained ARR",
-      "value": 1840000,
-      "delta": 12,
-      "trend": "up",
-      "description": "Recovered from save plays"
-    },
-    {
-      "label": "Expansion pipeline",
-      "value": 420000,
-      "delta": 9,
-      "trend": "up",
-      "description": "Qualified by usage signals"
-    },
-    {
-      "label": "Health score avg.",
-      "value": 74,
-      "delta": 4,
-      "trend": "up",
-      "description": "Improving after onboarding fixes"
-    }
-  ],
-  "playbooks": [
-    {
-      "id": "pb-churn-critical",
-      "name": "Critical Churn Intervention",
-      "description": "Executive-level outreach for accounts flagged Critical by the ML model.",
-      "trigger": "Churn probability > 65%",
-      "status": "active",
-      "accountsInPlay": 3,
-      "lastTriggered": "2026-07-08",
-      "steps": ["Flag for executive review", "Schedule emergency QBR", "Send personalised retention offer", "Log outcome"]
-    },
-    {
-      "id": "pb-engagement-drop",
-      "name": "Engagement Drop Recovery",
-      "description": "Automated outreach when login frequency falls more than 30% week-over-week.",
-      "trigger": "Login drop > 30% WoW",
-      "status": "active",
-      "accountsInPlay": 5,
-      "lastTriggered": "2026-07-07",
-      "steps": ["Send re-engagement email", "Assign feature coaching session", "Check in after 3 days"]
-    },
-    {
-      "id": "pb-renewal-90",
-      "name": "90-Day Renewal Prep",
-      "description": "Structured renewal preparation playbook triggered 90 days before contract end.",
-      "trigger": "Renewal date in 90 days",
-      "status": "active",
-      "accountsInPlay": 2,
-      "lastTriggered": "2026-07-01",
-      "steps": ["Book renewal review call", "Prepare value report", "Negotiate multi-year terms", "Confirm renewal"]
-    },
-    {
-      "id": "pb-expansion",
-      "name": "Expansion Opportunity",
-      "description": "Triggered when usage crosses 90% capacity — signals upsell readiness.",
-      "trigger": "Expansion potential > 85%",
-      "status": "active",
-      "accountsInPlay": 1,
-      "lastTriggered": "2026-07-05",
-      "steps": ["Notify account owner", "Prepare expansion proposal", "Book discovery call"]
-    },
-    {
-      "id": "pb-nps-low",
-      "name": "Low NPS Recovery",
-      "description": "Immediate CSM intervention when NPS falls below 20.",
-      "trigger": "NPS score < 20",
-      "status": "paused",
-      "accountsInPlay": 0,
-      "lastTriggered": "2026-06-20",
-      "steps": ["Send apology and acknowledgement", "Schedule support review", "Deliver improvement summary"]
-    }
-  ],
-  "timelineEvents": {
-    "acme-cloud": [
-      {
-        "id": "evt-ac-1",
-        "date": "2026-07-01",
-        "title": "Feature adoption spike",
-        "detail": "Invites, dashboards, and automation workflows all crossed 80% weekly usage.",
-        "category": "product"
-      },
-      {
-        "id": "evt-ac-2",
-        "date": "2026-07-04",
-        "title": "Billing renewal confirmed",
-        "detail": "Customer pre-approved annual renewal with no commercial risk flagged.",
-        "category": "billing"
-      },
-      {
-        "id": "evt-ac-3",
-        "date": "2026-07-06",
-        "title": "Support resolved",
-        "detail": "One P1 ticket closed after API rate limit tuning and cache optimization.",
-        "category": "support"
-      }
-    ],
-    "northstar-health": [
-      {
-        "id": "evt-nh-1",
-        "date": "2026-07-02",
-        "title": "Logins declined",
-        "detail": "Weekly active seats dropped 28% after a workflow rollout went unacknowledged.",
-        "category": "signal"
-      },
-      {
-        "id": "evt-nh-2",
-        "date": "2026-07-05",
-        "title": "QBR rescheduled twice",
-        "detail": "The customer success QBR was rescheduled twice by the customer team — risk signal.",
-        "category": "product"
-      },
-      {
-        "id": "evt-nh-3",
-        "date": "2026-07-07",
-        "title": "Invoice reminder sent",
-        "detail": "Automated billing nudge sent. Customer acknowledged but cited budget review delay.",
-        "category": "billing"
-      }
-    ],
-    "atlas-retail": [
-      {
-        "id": "evt-ar-1",
-        "date": "2026-06-25",
-        "title": "API usage collapsed",
-        "detail": "API calls dropped 70% in a single week following internal tech change.",
-        "category": "signal"
-      },
-      {
-        "id": "evt-ar-2",
-        "date": "2026-07-01",
-        "title": "Executive sponsor left",
-        "detail": "Primary champion (VP Product) gave notice — key relationship at risk.",
-        "category": "product"
-      },
-      {
-        "id": "evt-ar-3",
-        "date": "2026-07-03",
-        "title": "P1 support escalation",
-        "detail": "Three P1 tickets opened in 48 hours. Engineering patched root cause.",
-        "category": "support"
-      },
-      {
-        "id": "evt-ar-4",
-        "date": "2026-07-06",
-        "title": "Renewal risk flagged",
-        "detail": "Automated model elevated to Critical. Executive outreach initiated.",
-        "category": "billing"
-      }
-    ],
-    "bluepine-studio": [
-      {
-        "id": "evt-bp-1",
-        "date": "2026-07-01",
-        "title": "Onboarding completed",
-        "detail": "All 12 team members completed onboarding. Activation milestone hit.",
-        "category": "product"
-      },
-      {
-        "id": "evt-bp-2",
-        "date": "2026-07-05",
-        "title": "NPS response: 72",
-        "detail": "Customer submitted a glowing NPS with expansion interest noted.",
-        "category": "signal"
-      }
-    ],
-    "orbit-finance": [
-      {
-        "id": "evt-of-1",
-        "date": "2026-06-28",
-        "title": "Login frequency dropped",
-        "detail": "Daily logins fell from 8/day to 3/day — engagement health degrading.",
-        "category": "signal"
-      },
-      {
-        "id": "evt-of-2",
-        "date": "2026-07-02",
-        "title": "Support ticket opened",
-        "detail": "P2 ticket: billing export workflow broken after last update.",
-        "category": "support"
-      },
-      {
-        "id": "evt-of-3",
-        "date": "2026-07-04",
-        "title": "Ticket resolved",
-        "detail": "Engineering patched the export bug. Customer confirmed fix.",
-        "category": "support"
-      }
-    ],
-    "summit-ops": [
-      {
-        "id": "evt-so-1",
-        "date": "2026-07-01",
-        "title": "Expansion signal detected",
-        "detail": "Usage crossed 95% capacity on their current tier — strong upsell indicator.",
-        "category": "signal"
-      },
-      {
-        "id": "evt-so-2",
-        "date": "2026-07-04",
-        "title": "New team joined",
-        "detail": "Finance team onboarded to ForesightCS — 5 new seats added.",
-        "category": "product"
-      },
-      {
-        "id": "evt-so-3",
-        "date": "2026-07-07",
-        "title": "Pre-renewal discussion",
-        "detail": "CSM and VP CS aligned on 2-year renewal with 15% ARR expansion.",
-        "category": "billing"
-      }
-    ]
-  }
+  ]
 }

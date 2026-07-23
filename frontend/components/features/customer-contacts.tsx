@@ -14,9 +14,9 @@ export function CustomerContacts({ contacts }: { contacts: CustomerDetail['conta
         </h2>
       </div>
       <div className="space-y-3">
-        {contacts.map((contact, i) => (
+        {contacts.map((contact) => (
           <div
-            key={i}
+            key={contact.id}
             className="group relative flex items-center justify-between rounded-2xl border border-white/8 bg-black/20 p-3 transition-colors hover:border-white/12 hover:bg-white/4"
           >
             <div className="flex items-center gap-3">
